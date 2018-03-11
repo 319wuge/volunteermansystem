@@ -1,0 +1,57 @@
+<meta charset="utf-8"/>
+<title>$!projectCnName</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+<meta name="robots" content="noarchive"/>
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<link href="$!static.getURL("assets/plugins/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/plugins/bootstrap/css/bootstrap.min.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/plugins/uniform/css/uniform.default.css")" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+<!-- BEGIN THEME STYLES -->
+<link href="$!static.getURL("assets/css/style-metronic.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/css/style.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/css/style-responsive.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/css/plugins.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/css/themes/default.css")" rel="stylesheet" type="text/css"/>
+<link href="$!static.getURL("assets/css/custom.css")" rel="stylesheet" type="text/css"/>
+
+<link rel="stylesheet" type="text/css" href="$!static.getURL("easyui/themes/bootstrap/easyui.css")">
+<link rel="stylesheet" type="text/css" href="$!static.getURL("easyui/themes/icon.css")">
+<link rel="stylesheet" type="text/css" href="$!static.getURL("easyui/demo.css")">
+<link rel="stylesheet" type="text/css" href="$!static.getURL("assets/css/watermark.css")">
+<link rel="stylesheet" type="text/css" href="$!static.getURL("assets/css/customize.css")">
+
+<!-- END THEME STYLES -->
+
+<script src="$!static.getURL("easyui/jquery.min.js")" type="text/javascript"></script>
+<script src="$!static.getURL("assets/scripts/custom/watermark.js")" type="text/javascript"></script>
+<style type="text/css">
+    body {
+        font-family: "Microsoft YaHei";
+    }
+
+    .panel-header, .panel-body {
+        border-width: 0px;
+    }
+
+    .datagrid, .combo-p {
+        border: solid 1px #D4D4D4;
+    }
+
+    .datagrid * {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+    }
+</style>
+<script type="text/javascript">
+    window.watermark =  {
+        mobile: "$!agentEncrypterMobile"
+    }
+    var _basePath = "$!{basePath}";
+</script>
+

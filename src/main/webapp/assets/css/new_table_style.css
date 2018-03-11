@@ -1,0 +1,33 @@
+.container {
+  width: 94%;
+}
+.table-hover {
+  background-color: #F2F2F2;
+  /* background: -webkit-linear-gradient(top,#ffffff 0,#F2F2F2 100%); */
+  background: -moz-linear-gradient(top,#ffffff 0,#F2F2F2 100%);
+  background: -o-linear-gradient(top,#ffffff 0,#F2F2F2 100%);
+  background: linear-gradient(to bottom,#ffffff 0,#F2F2F2 100%);
+  background-repeat: repeat-x;
+}
+.fixed-table-container th, .fixed-table-container td{
+  border-width: 1px 1px 1px 0;
+  border-style: dotted;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  font-size: 12px
+}
+.fixed-table-container thead th .th-inner, .fixed-table-container tbody td .th-inner{
+  line-height: normal;
+}
+.fixed-table-body-columns .table-hover {
+  /*background: #eee;*/
+}
+
+
+#table tr:nth-child(odd) td {
+    background: #fff;
+}
+#table tr:nth-child(even) td, .table-hover tr:nth-child(even) td{
+    background: rgba(234, 234, 234, .5);
+}

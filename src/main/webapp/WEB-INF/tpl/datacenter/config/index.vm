@@ -1,0 +1,608 @@
+#set($layout = "/layout/list_layout.vm")
+#parse("/common/constants.vm")
+
+## 字段管理
+<div class="col-md-12">
+    <div class="portlet">
+        <div class="portlet-title">
+            <div class="caption">字段管理</div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <a type="button" class="btn btn-default" onclick="reportConfigJs.addReportData()">新增字段</a>
+    <a type="button" class="btn btn-default" onclick="reportConfigJs.goDefaultConfig()">默认字段管理</a>
+</div>
+<div class="clearfix margin-bottom-10"></div>
+
+<div id="newReportDataTitle" style="height: 43px;"></div>
+
+<div class="portlet-body col-md-offset-2 col-md-7">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#" data-toggle="tab" id="dataSwitch" onclick="switchForm(1)">
+                选择字段
+            </a>
+        </li>
+        <li class="">
+            <a href="#" data-toggle="tab" id="expSwitch" onclick="switchForm(2)">
+                四则运算
+            </a>
+        </li>
+    </ul></div>
+<div class="clearfix margin-bottom-20"></div>
+
+## 选择字段
+<form action="#" class="form-horizontal" id="dataReportForm">
+    <input id="handleType" name="handleType" value="0" type="hidden">
+    <div class="form-body">
+        <div class="form-group">
+            <label class="col-md-3 control-label">字段ID</label>
+            <div class="col-md-4">
+                <input type="text" name="id" id="reportDataId" value="$!data.reportDataId"
+                       class="form-control" maxlength="100" placeholder="请输入字段ID">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label">类名</label>
+            <div class="col-md-4">
+                <input type="text" name="className" id="className" value="$!data.className"
+                       class="form-control" maxlength="100" placeholder="请输入类名">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">字段名称</label>
+            <div class="col-md-4">
+                <input type="text" name="dataName" id="dataName" value="$!data.dataName"
+                       class="form-control" maxlength="20" placeholder="请输入字段名称">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">字段解释</label>
+            <div class="col-md-4">
+                <textarea name="description" id="description"
+                          class="form-control" maxlength="100" placeholder="请输入字段解释">$!data.description</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">维护人</label>
+            <div class="col-md-4">
+                <input type="text" name="maintenanceMan" id="maintenanceMan" value="$!data.maintenanceMan" class="form-control" maxlength="10" placeholder="请输入维护人">
+            </div>
+        </div>
+    ##        <div class="form-group">
+    ##            <label class="col-md-3 control-label">层级从属</label>
+    ##            <div class="col-md-4">
+    ##                <select style="width: 100px" name="levelOne" id="levelOne" autocomplete="off" >
+    ##                    #if($levelOneList)
+    ##                        #foreach($levelOne in $levelOneList)
+    ##                            #if($!data.levelOne == $!levelOne.id)
+    ##                                <option value="$!levelOne.id" selected>$!levelOne.name</option>
+    ##                            #else
+    ##                                <option value="$!levelOne.id">$!levelOne.name</option>
+    ##                            #end
+    ##                        #end
+    ##                    #else
+    ##                        <option value="">请选择</option>
+    ##                        #foreach($levelOneDefault in $levelVoList)
+    ##                            <option value="$!levelOneDefault.id">$!levelOneDefault.name</option>
+    ##                        #end
+    ##                    #end
+    ##                </select>
+    ##                <select style="width: 100px" name="levelTwo" id="levelTwo" autocomplete="off" >
+    ##                    #if($levelTwoList)
+    ##                        #foreach($levelTwo in $levelTwoList)
+    ##                            #if($!data.levelTwo == $!levelTwo.id)
+    ##                                <option value="$!levelTwo.id" selected>$!levelTwo.name</option>
+    ##                            #else
+    ##                                <option value="$!levelTwo.id">$!levelTwo.name</option>
+    ##                            #end
+    ##                        #end
+    ##                    #else
+    ##                        <option value="">请选择</option>
+    ##                    #end
+    ##                </select>
+    ##                <select style="width: 100px" name="levelThree" id="levelThree" autocomplete="off">
+    ##                    #if($levelThreeList)
+    ##                        #foreach($levelThree in $levelThreeList)
+    ##                            #if($!data.levelThree == $!levelThree.id)
+    ##                                <option value="$!levelThree.id" selected>$!levelThree.name</option>
+    ##                            #else
+    ##                                <option value="$!levelThree.id">$!levelThree.name</option>
+    ##                            #end
+    ##                        #end
+    ##                    #else
+    ##                        <option value="">请选择</option>
+    ##                    #end
+    ##                </select>
+    ##                <select style="width: 100px" name="levelFour" id="levelFour" autocomplete="off">
+    ##                    #if($levelFourList)
+    ##                        #foreach($levelFour in $levelFourList)
+    ##                            #if($!data.levelFour == $!levelFour.id)
+    ##                                <option value="$!levelFour.id" selected>$!levelFour.name</option>
+    ##                            #else
+    ##                                <option value="$!levelFour.id">$!levelFour.name</option>
+    ##                            #end
+    ##                        #end
+    ##                    #else
+    ##                        <option value="">请选择</option>
+    ##                    #end
+    ##                </select>
+    ##            </div>
+    ##
+    ##        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">业务属性</label>
+            <div class="col-md-4">
+                <select class="form-control" name="bizType" id="bizType" autocomplete="off">
+                    #foreach($biz in $bizType)
+                        #if($!data.bizType == $!biz.intValue())
+                            <option value="$biz.intValue()" selected>$biz.getName()</option>
+                        #else
+                            <option value="$biz.intValue()">$biz.getName()</option>
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">特殊单位</label>
+            <div class="col-md-4">
+                <select class="form-control" name="showUnit" autocomplete="off" id="showUnit">
+                    #foreach($unit in $showUnit)
+                        #if($data.showUnit)
+                            #if($!data.showUnit == $unit.intValue())
+                                <option value="$unit.intValue()" selected>$!unit.getName()</option>
+                            #else
+                                <option value="$unit.intValue()">$unit.getName()</option>
+                            #end
+                        #else
+                            #if($unit.intValue() == 0)
+                                <option value="$unit.intValue()" selected="selected">$unit.getName()</option>
+                            #else
+                                <option value="$unit.intValue()">$unit.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">可累加</label>
+            <div class="col-md-4">
+                <select class="form-control" name="accumulation" id="accumulation" autocomplete="off">
+                    #foreach($whether in $accumulationEnum)
+                        #if($!whether.intValue() != -1)
+                            #if($data.accumulation)
+                                #if($!data.accumulation == $whether.intValue())
+                                    <option value="$whether.intValue()" selected>$whether.getName()</option>
+                                #else
+                                    <option value="$whether.intValue()">$whether.getName()</option>
+                                #end
+                            #else
+                                <option value="$whether.intValue()">$whether.getName()</option>
+                            #end
+                        #end
+
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">需计算的层级</label>
+            <div class="col-md-5" id="topClassDiv">
+                #foreach($aleve in $arealLevel)
+                    #if($aleve.getId() != -1)
+                        #if($topClassList)
+                            #if($topClassList.contains($aleve.getId()))
+                                <input type="checkbox" checked="checked" name="topClass" value="$aleve.getId()">
+                                &nbsp;<label>$aleve.getName()</label>
+                            #else
+                                <input type="checkbox" name="topClass" value="$aleve.getId()">
+                                &nbsp;<label>$aleve.getName()</label>
+                            #end
+                        #else
+                            <input type="checkbox" name="topClass" value="$aleve.getId()">
+                            &nbsp;<label>$aleve.getName()</label>
+                        #end
+
+                    #end
+                #end
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">报表类型</label>
+            <div class="col-md-4" id="reportTypeDiv">
+                #foreach($dataCenterType in $dataCenterTypeEnum)
+                    #if($dataCenterType.intValue() != -1)
+                        #if($reportTypeList)
+                            #if($reportTypeList.contains($dataCenterType.intValue()))
+                                <input type="checkbox" checked="checked" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label>
+                                #if($velocityCount == 4 || $velocityCount == 8)
+                                    <br>
+                                #end
+                            #else
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label>
+                                #if($velocityCount == 4 || $velocityCount == 8)
+                                    <br>
+                                #end
+                            #end
+
+                        #else
+                            #if($velocityCount == 4)
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label><br>
+                            #elseif($velocityCount == 8)
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label><br>
+                            #else
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label>
+                            #end
+                        #end
+                    #end
+                #end
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">频率</label>
+            <div class="col-md-4">
+                <select class="form-control" name="rate" id="rate">
+                    #foreach($rate in $retaEnum)
+                        #if($!rate.getId() != -1)
+                            #if($data.rate)
+                                #if($!data.rate == $rate.getId())
+                                    #if($!rate.getId() == 1)
+                                        <option value="$rate.getId()" selected>高（$rate.getName()）</option>
+                                    #elseif($!rate.getId() == 2)
+                                        <option value="$rate.getId()" selected>中（$rate.getName()）</option>
+                                    #else
+                                        <option value="$rate.getId()" selected>低（$rate.getName()）</option>
+                                    #end
+                                #else
+                                    #if($!rate.getId() == 1)
+                                        <option value="$rate.getId()">高（$rate.getName()）</option>
+                                    #elseif($!rate.getId() == 2)
+                                        <option value="$rate.getId()">中（$rate.getName()）</option>
+                                    #else
+                                        <option value="$rate.getId()">低（$rate.getName()）</option>
+                                    #end
+                                #end
+                            #else
+                                #if($!rate.getId() == 1)
+                                    <option value="$rate.getId()">高（$rate.getName()）</option>
+                                #elseif($!rate.getId() == 2)
+                                    <option value="$rate.getId()">中（$rate.getName()）</option>
+                                #else
+                                    <option value="$rate.getId()">低（$rate.getName()）</option>
+                                #end
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">计算方法</label>
+            <div class="col-md-4">
+                <select class="form-control" name="method" autocomplete="off" id="method">
+                    #foreach($method in $methodEnum)
+                        #if($data.method)
+                            #if($!data.method == $!method.intValue())
+                                <option value="$method.intValue()" selected>$method.getName()</option>
+                            #else
+                                <option value="$method.intValue()">$method.getName()</option>
+                            #end
+                        #else
+                            #if($method.intValue() == 1)
+                                <option value="$method.intValue()" selected>$method.getName()</option>
+                            #else
+                                <option value="$method.intValue()">$method.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">对比表累加</label>
+            <div class="col-md-4">
+                <select class="form-control" name="dbbAttr" autocomplete="off" id="dbbAttr">
+                    #foreach($dbbAttr in $dbbAttrEnum)
+                        #if($data.dbbAttr)
+                            #if($!data.dbbAttr == $!dbbAttr.getId())
+                                <option value="$dbbAttr.getId()" selected>$dbbAttr.getName()</option>
+                            #else
+                                <option value="$dbbAttr.getId()">$dbbAttr.getName()</option>
+                            #end
+                        #else
+                            #if($dbbAttr.getId() == 1)
+                                <option value="$dbbAttr.getId()" selected>$dbbAttr.getName()</option>
+                            #else
+                                <option value="$dbbAttr.getId()">$dbbAttr.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">显示层级</label>
+            <div class="col-md-4">
+                <select class="form-control" name="showLevelId" id="showLevelId">
+                    #if($data.showLevelId)
+                        #if($!data.showLevelId == 0)
+                            <option value="0" selected>请选择</option>
+                        #else
+                            <option value="0">请选择</option>
+                        #end
+                    #else
+                        <option value="0">请选择</option>
+                    #end
+                    #foreach($showLevel in $showLevelList)
+                        #if($data.showLevelId)
+                            #if($!data.showLevelId == $!showLevel.getId())
+                                <option value="$showLevel.getId()" selected>$showLevel.getLevelName()</option>
+                            #else
+                                <option value="$showLevel.getId()">$showLevel.getLevelName()</option>
+                            #end
+                        #else
+                            <option value="$showLevel.getId()">$showLevel.getLevelName()</option>
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">可重新计算</label>
+            <div class="col-md-4">
+                <select class="form-control" name="recalculation" id="recalculation">
+                    #foreach($whether in $whetherEnum)
+                        #if($!whether.intValue() != -1)
+                            #if($data.recalculation)
+                                #if($!data.recalculation == $!whether.intValue())
+                                    <option value="$whether.intValue()" selected>$whether.getName()</option>
+                                #else
+                                    <option value="$whether.intValue()">$whether.getName()</option>
+                                #end
+                            #else
+                                <option value="$whether.intValue()">$whether.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">是否有效</label>
+            <div class="col-md-4">
+                <select class="form-control" name="effective" id="effective">
+                    #foreach($whether in $whetherEnum)
+                        #if($whether.intValue() != -1)
+                            #if($data.effective)
+                                #if($!data.effective == $!whether.intValue())
+                                    <option value="$whether.intValue()" selected>$whether.getName()</option>
+                                #else
+                                    <option value="$whether.intValue()">$whether.getName()</option>
+                                #end
+                            #else
+                                <option value="$whether.intValue()">$whether.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">是否展示</label>
+            <div class="col-md-4">
+                <select class="form-control" name="display" id="display">
+                    #foreach($whether in $whetherEnum)
+                        #if($whether.intValue() != -1)
+                            #if($data.display)
+                                #if($!data.display == $!whether.intValue())
+                                    <option value="$whether.intValue()" selected>$whether.getName()</option>
+                                #else
+                                    <option value="$whether.intValue()">$whether.getName()</option>
+                                #end
+                            #else
+                                <option value="$whether.intValue()">$whether.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-offset-4">
+        <button type="button" class="btn btn-default" onclick="reportConfigJs.resetForm()">清空</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" id="dataSaveBtn" class="btn blue" onclick="reportConfigJs.saveDataReport()">提交</button>
+    </div>
+</form>
+
+<div class="clearfix margin-bottom-20"></div>
+
+## 四则运算
+<form action="#" class="form-horizontal" id="expressionForm" style="display: none">
+    <input id="expressionId" name="id" value="$!expressionVo.id" type="hidden">
+    <div class="form-body">
+        <div class="form-group">
+            <label class="col-md-3 control-label">名称</label>
+            <div class="col-md-4">
+                <input type="text" name="name" id="expressionName" value="$!expressionVo.name" class="form-control" maxlength="20" placeholder="请输入名称">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">表达式</label>
+            <div class="col-md-4">
+                <input type="text" name="expression" id="expressionContent" value="$!expressionVo.expression" class="form-control" maxlength="100" placeholder="请输入表达式">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">解释</label>
+            <div class="col-md-4">
+                <textarea name="description" id="expDescription"
+                          class="form-control" maxlength="100" placeholder="请输入运算式解释">$!expressionVo.description</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">显示层级</label>
+            <div class="col-md-4">
+                <select class="form-control" name="dataLevelId" id="dataLevelId">
+                    #if($expressionVo.showLevelId)
+                        #if($!expressionVo.showLevelId == 0)
+                            <option value="0" selected>请选择</option>
+                        #else
+                            <option value="0">请选择</option>
+                        #end
+                    #else
+                        <option value="0">请选择</option>
+                    #end
+                    #foreach($showLevel in $showLevelList)
+                        #if($expressionVo.showLevelId)
+                            #if($!expressionVo.showLevelId == $!showLevel.getId())
+                                <option value="$showLevel.getId()" selected>$showLevel.getLevelName()</option>
+                            #else
+                                <option value="$showLevel.getId()">$showLevel.getLevelName()</option>
+                            #end
+                        #else
+                            <option value="$showLevel.getId()">$showLevel.getLevelName()</option>
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">报表类型</label>
+            <div class="col-md-4" id="expressionReportTypeDiv">
+                #foreach($dataCenterType in $dataCenterTypeEnum)
+                    #if($dataCenterType.intValue() != -1)
+                        #if($expReportTypeList)
+                            #if($expReportTypeList.contains($dataCenterType.intValue()))
+                                <input type="checkbox" checked="checked" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label>
+                                #if($velocityCount == 4 || $velocityCount == 8)
+                                    <br>
+                                #end
+                            #else
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label>
+                                #if($velocityCount == 4 || $velocityCount == 8)
+                                    <br>
+                                #end
+                            #end
+
+                        #else
+                            #if($velocityCount == 4)
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label><br>
+                            #elseif($velocityCount == 8)
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label><br>
+                            #else
+                                <input type="checkbox" name="reportType" value="$dataCenterType.intValue()">
+                                &nbsp;<label>$dataCenterType.getName()</label>
+                            #end
+                        #end
+                    #end
+                #end
+            </div>
+        </div>
+    </div>
+    <div class="col-md-offset-4">
+        <button type="button" class="btn btn-default">取消</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" id="expSaveBtn" class="btn blue" onclick="reportConfigJs.saveExpression()">提交</button>
+    </div>
+</form>
+
+<div class="col-md-12">
+    <div class="portlet">
+        <div class="portlet-title">
+            <div class="caption" id="tableTitle">字段列表</div>
+        </div>
+    </div>
+</div>
+<div class="col-md-12" id="reportDataTableDiv">
+    <table id="reportDataTable" data-height="400" data-options="nowrap:false"></table>
+</div>
+
+<div class="col-md-9" id="expressionTableDiv" style="display: none">
+    <table id="expressionTable" data-height="400" data-options="nowrap:false"></table>
+</div>
+
+<script src="$!static.getURL("scripts/datacenter/config/index.js")"></script>
+<script>
+    $(function() {
+        var editType = '$!editType';
+        if (editType == 2) {
+            $('#expSwitch').click();
+        }
+        if (editType) {
+            $('#handleType').val(1);
+        }
+//        initReportDataLevel();
+
+        selectTopClass();
+    });
+
+    function switchForm(formType) {
+        if (formType == 1) {
+            $('#dataReportForm').show();
+            $('#expressionForm').hide();
+
+            $('#reportDataTableDiv').show();
+            $('#expressionTableDiv').hide();
+            $('#reportDataTable').datagrid('resize');
+            $('#tableTitle').html('字段列表');
+        } else {
+            $('#dataReportForm').hide();
+            $('#expressionForm').show();
+
+            $('#reportDataTableDiv').hide();
+            $('#expressionTableDiv').show();
+            $('#expressionTable').datagrid('resize');
+            $('#tableTitle').html('运算式列表');
+        }
+    }
+
+    function selectTopClass() {
+        $('#accumulation').change(function () {
+            $('#topClassDiv').find('input').removeAttr('checked');
+
+            var val = $(this).val();
+            var topClassVals;
+            if (val == 0) {
+                $('#topClassDiv').find('input').attr('disabled', 'disabled');
+                return;
+            } else if (val == 1) {
+                topClassVals = [];
+            } else if (val == 2) {
+                topClassVals = [20];
+            } else if (val == 3) {
+                topClassVals = [20, 30];
+            } else if (val == 4) {
+                topClassVals = [20, 30, 40];
+            } else if (val == 5) {
+                topClassVals = [20, 30, 40, 50];
+            } else if (val == 6) {
+                topClassVals = [20, 30, 40, 50, 60];
+            }
+            disabledTopClassByVal(topClassVals);
+        });
+    }
+    
+    function disabledTopClassByVal(vals) {
+        $('#topClassDiv').find('input').removeAttr('disabled', 'disabled');
+        if (vals.length > 0) {
+            for (var i = 0; i < vals.length; i++) {
+                $('#topClassDiv').find('input[value="' + vals[i] + '"]').attr('disabled', 'disabled');
+            }
+        }
+    }
+</script>

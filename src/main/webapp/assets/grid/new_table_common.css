@@ -1,0 +1,54 @@
+.container {
+  width: 100%;
+}
+
+.bootstrap-table .table {
+  background: transparent;
+}
+
+.table-hover {
+  background-color: #F2F2F2;
+  /* background: -webkit-linear-gradient(top,#ffffff 0,#F2F2F2 100%); */
+  background: -moz-linear-gradient(top,#ffffff 0,#F2F2F2 100%);
+  background: -o-linear-gradient(top,#ffffff 0,#F2F2F2 100%);
+  background: linear-gradient(to bottom,#ffffff 0,#F2F2F2 100%);
+  background-repeat: repeat-x;
+}
+.fixed-table-container th, .fixed-table-container td{
+  border-width: 1px 1px 1px 1px;
+  /*border-style: dotted;*/
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  font-size: 12px;
+  vertical-align: middle;
+}
+.fixed-table-container thead th .th-inner, .fixed-table-container tbody td .th-inner{
+  line-height: normal;
+}
+.fixed-table-body {
+  overflow-y: hidden;
+}
+.bootstrap-table .table thead > tr > th {
+  vertical-align: middle;
+}
+.fixed-table-container thead th .th-inner, .fixed-table-container tbody td .th-inner {
+  text-align: center;
+}
+.fixed-table-header-columns thead > tr > th:nth-last-child(2){
+  border-right: 1px solid #ddd;
+}
+.fixed-table-container thead th:first-child {
+  border-left: 1px solid #ddd;
+}
+.fixed-table-header-columns thead th:nth-last-child{
+  /*border-left: none;*/
+}
+
+
+#table tr:nth-child(odd) td {
+  background: rgba(256, 256, 256, 0.5);
+}
+#table tr:nth-child(even) td, .table-hover tr:nth-child(even) td{
+  background: rgba(234, 234, 234, 0.5);
+}

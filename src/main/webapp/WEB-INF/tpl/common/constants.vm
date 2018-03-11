@@ -1,0 +1,5 @@
+#set($basePath = ${rc.contextPath})
+#set($staticUrl = $configResource.getSystemProperty('static.url'))
+#set($staticVer = $configResource.getSystemProperty('static.ver'))
+#set($agentconsoleUrl = $configResource.getSystemProperty('agentconsole.url'))
+#set($projectCnName = "经纪人核心报表系统")

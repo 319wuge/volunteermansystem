@@ -1,0 +1,642 @@
+##普通的字典下拉框
+#macro (simpleCombobox $id $entryName $methodName $defaultValue $limitText $limitValue $dataOptions)
+##根据类名获取字典里的枚举集合
+    #simpleCombobox2($id $entryName $methodName "name" $defaultValue $limitText $limitValue $dataOptions)
+#end
+
+
+##普通的字典下拉框
+#macro (simpleCombobox2 $id $entryName $methodName $enumFieldName $defaultValue $limitText $limitValue $dataOptions)
+    #simpleDomCombobox($id $entryName $methodName "name" $defaultValue $limitText $limitValue $dataOptions "easyui-combobox")
+#end
+
+#macro (simpleDomCombobox $id $entryName $methodName $enumFieldName $defaultValue $limitText $limitValue $dataOptions $cssClass)
+##根据类名获取字典里的枚举集合
+    #set($dicts = "")
+    #if($entryName.indexOf(".") != -1)
+        #set($dicts = $dictUtils.getDataByCompleteClassName($entryName, $methodName))
+    #else
+        #if($methodName == "")
+            #set($dicts = $dictUtils.getData($entryName))
+        #else
+            #set($dicts = $dictUtils.getDataByMethod($entryName, $methodName))
+        #end
+    #end
+##判断列表长度
+    #if($dicts && $dicts.size() && $dicts.size() > 0)
+    <select class="$!cssClass" data-options="$!dataOptions" id="$!{id}" name="$!{id}">
+    ##初始化第一个下拉框
+        #if($limitText && $limitText != "")
+            <option title="$!limitText" value="$!limitValue">$!limitText</option>
+        #end
+    ##初始化其它下拉框
+        #foreach($dict in $dicts)
+            #set($dict_id = $dict.intValue())
+            <option title="$!{dict.name}" value="$!{dict_id}"
+                #if($defaultValue == $dict_id)
+                    selected="selected"
+                #end
+            >$!dictUtils.valueOf($entryName, $dict_id, $enumFieldName)</option>
+        #end
+    </select>
+    #end
+#end
+
+##普通的下拉框
+#macro (simpleCombobox3 $id $jsonArrayStr $defaultValue $limitValue $limitText)
+##    #set($jsonData = $jsonArrayStr)
+##    $jsonData
+##    <select class="easyui-combobox" data-options="editable:false,panelHeight:'auto'" id="$!{id}" name="$!{id}" >
+##        #foreach($data in $jsonData)
+##            <option title="$!{data.text}" value="$!{data.value}">$!{data.text}</option>
+##        #end
+##    </select>
+<input id="$!id" name="$!id" style="$style"/>
+<script type="text/javascript">
+    (function ($) {
+                $(function () {
+                    var m_m_id = "$!id";
+                    var m_m_default_value = "$defaultValue";
+                    var m_m_array = JSON.parse('$jsonArrayStr');
+                    #if($!limitText != "")
+                        m_m_array.unshift({value: "$!limitValue", "text": "$!limitText"});
+                    #end
+                    jQuery("#" + m_m_id).combobox({
+                        multiple: false,
+                        editable: false,
+                        editable: false,
+                        panelHeight: 'auto',
+                        valueField: 'value',
+                        textField: 'text',
+                        data: m_m_array,
+                        onLoadSuccess: function () {
+                            var items = $("#" + m_m_id).combobox("getData");
+                            var defaultValue = m_m_default_value;
+                            if (items.length > 0) {
+                                var flag = false;
+                                for (var i = 0; i < items.length; i++) {
+                                    if (defaultValue == items[i].value) {
+                                        flag = true;
+                                    }
+                                }
+                                if (!flag)
+                                    defaultValue = items[0].value;
+                                $(this).combobox("select", defaultValue);
+                            }
+                        },
+                    });
+                });
+            })(jQuery)
+</script>
+#end
+
+##基于字典的多选框
+#macro(multiComboboxBase $id $style $entryName $methodName $enumFieldName $defaultValue $limitText $limitValue $dataOptions $loadSuccessCallBack $lazy)
+<input id="$!id" name="$!id" style="$style"/>
+##根据类名获取字典里的枚举集合
+    #set($dicts = "")
+    #if($entryName.indexOf(".") != -1)
+        #set($dicts = $dictUtils.getDataByCompleteClassName($entryName, $methodName))
+    #else
+        #if($methodName == "")
+            #set($dicts = $dictUtils.getData($entryName))
+        #else
+            #set($dicts = $dictUtils.getDataByMethod($entryName, $methodName))
+        #end
+    #end
+<script type="text/javascript">
+    var $!{id}MultiComboboxLoad;
+    (function ($) {
+        $(function () {
+                $!{id}MultiComboboxLoad = load;
+            #if($lazy == false)
+                load();
+            #end
+        });
+        function load() {
+            var m_m_id = "$!id";
+            var m_m_default_value = "$!defaultValue";
+            var m_m_limit_value = "$!limitValue";
+            var m_m_limit_text = "$!limitText";
+            var m_m_array = new Array();
+            #if($dicts && $dicts.size() > 0)
+                #if($!limitText != "")
+                    m_m_array.push({id: "$!limitValue", "text": "$!limitText"});
+                #end
+                #foreach($dict in $dicts)
+                    m_m_array.push({
+                        id: "$!dict.intValue()",
+                        "text": "$!dictUtils.valueOf($entryName, $!dict.intValue(), $enumFieldName)"
+                    });
+                #end
+            #end
+            jQuery("#" + m_m_id).combobox({
+                multiple: true,
+                editable: false,
+                valueField: 'id',
+                textField: 'text',
+                data: m_m_array,
+                $!dataOptions
+                formatter: function (row) {
+                    var opts = $(this).combobox('options');
+                    if (m_m_limit_value == row[opts.valueField])
+                        return row[opts.textField];
+                    return '<input type="checkbox" class="combobox-checkbox">&nbsp;' + row[opts.textField];
+                },
+                onLoadSuccess: function () {
+                    var items = $(this).combobox("getData");
+                    var id = m_m_default_value;
+                    if (items.length > 0) {
+                        var flag = false;
+                        for (var i = 0; i < items.length; i++) {
+                            if (id == items[i].id) {
+                                flag = true;
+                            }
+                        }
+                        if (!flag)
+                            id = items[0].id;
+                        $(this).combobox("select", id);
+                    }
+                    $!loadSuccessCallBack
+                },
+                onSelect: function (row) {
+                    var opts = $(this).combobox('options');
+                    var vals = $(this).combobox('getValues');
+
+                    if (m_m_limit_value != row[opts.valueField]) {
+                        //选中checkbox
+                        var el = opts.finder.getEl(this, row[opts.valueField]);
+                        el.find('input.combobox-checkbox')._propAttr('checked', true);
+                    } else {
+                        //如选中不限, 则取消所有checkbox选中, 并选中不限
+                        for (var i = 0; i < vals.length; i++) {
+                            var el = opts.finder.getEl(this, vals[i]);
+                            el.find('input.combobox-checkbox')._propAttr('checked', false);
+                        }
+                        $(this).combobox('setValue', m_m_limit_value);
+                    }
+                    //重新获取下拉框的值
+                    vals = $(this).combobox('getValues');
+                    //如点击不限之外的其它选项, 则取消不限的选中, 选中其余的
+                    if (vals.length > 0) {
+                        var newvals = new Array();
+                        for (var i = 0; i < vals.length; i++) {
+                            var item = vals[i];
+                            if (item != m_m_limit_value)
+                                newvals.push(item);
+                        }
+                        if (newvals.length > 0)
+                            $(this).combobox('setValues', newvals);
+                    }
+                },
+                onUnselect: function (row) {
+                    var opts = $(this).combobox('options');
+                    if (m_m_limit_value != row[opts.valueField]) {
+                        var el = opts.finder.getEl(this, row[opts.valueField]);
+                        el.find('input.combobox-checkbox')._propAttr('checked', false);
+                    }
+                    //如果所有框都没有选中, 默认选中不限
+                    var selOpts = $(this).combobox("getValue");
+                    if (selOpts == undefined) {
+                        $(this).combobox("select", m_m_limit_value);
+                    }
+                }
+            });
+        }
+    })(jQuery)
+</script>
+#end
+
+##基于字典的多选框
+#macro(multiCombobox $id $entryName $methodName $defaultValue $limitText $limitValue $dataOptions $loadSuccessCallBack)
+    #multiComboboxBase($id "" $entryName $methodName
+        "name" $defaultValue $limitText $limitValue $dataOptions $loadSuccessCallBack false)
+#end
+
+
+##基于URL的多选框
+#macro(multiComboboxByURLBase $id $url $limitValue $defaultValue $dataOptions $loadSuccessCallBack $lazy)
+<input id="$!id" name="$!id"/>
+<script type="text/javascript">
+    var $!{id}MultiComboboxByURLLoad;
+    (function ($) {
+        $(function () {
+                $!{id}MultiComboboxByURLLoad = load;
+            #if($lazy == false)
+                load();
+            #end
+        });
+        function load() {
+            var m_m_id = "$!id";
+            var m_m_default_value = "$!defaultValue";
+            var m_m_limit_value = "$!limitValue";
+            jQuery("#" + m_m_id).combobox({
+                multiple: true,
+                editable: false,
+                valueField: 'id',
+                textField: 'text',
+                url: "$!url",
+                $!dataOptions
+                formatter: function (row) {
+                    var opts = $(this).combobox('options');
+                    if (m_m_limit_value == row[opts.valueField])
+                        return row[opts.textField];
+                    return '<input type="checkbox" class="combobox-checkbox">&nbsp;' + row[opts.textField];
+                },
+                onLoadSuccess: function () {
+                    var items = $(this).combobox("getData");
+                    var id = m_m_default_value;
+                    if (items.length > 0) {
+                        var flag = false;
+                        for (var i = 0; i < items.length; i++) {
+                            if (id == items[i].id) {
+                                flag = true;
+                            }
+                        }
+                        if (!flag)
+                            id = items[0].id;
+                        $(this).combobox("select", id);
+                    }
+                    $!loadSuccessCallBack
+                },
+                onSelect: function (row) {
+                    var opts = $(this).combobox('options');
+                    var vals = $(this).combobox('getValues');
+                    if (m_m_limit_value != row[opts.valueField]) {
+                        //选中checkbox
+                        var el = opts.finder.getEl(this, row[opts.valueField]);
+                        el.find('input.combobox-checkbox')._propAttr('checked', true);
+                    } else {
+                        //如选中不限, 则取消所有checkbox选中, 并选中不限
+                        for (var i = 0; i < vals.length; i++) {
+                            var el = opts.finder.getEl(this, vals[i]);
+                            el.find('input.combobox-checkbox')._propAttr('checked', false);
+                        }
+                        $(this).combobox('setValue', m_m_limit_value);
+                    }
+                    //重新获取下拉框的值
+                    vals = $(this).combobox('getValues');
+                    //如点击不限之外的其它选项, 则取消不限的选中, 选中其余的
+                    if (vals.length > 0) {
+                        var newvals = new Array();
+                        for (var i = 0; i < vals.length; i++) {
+                            var item = vals[i];
+                            if (item != m_m_limit_value)
+                                newvals.push(item);
+                        }
+                        if (newvals.length > 0)
+                            $(this).combobox('setValues', newvals);
+                    }
+                },
+                onUnselect: function (row) {
+                    var opts = $(this).combobox('options');
+                    if (m_m_limit_value != row[opts.valueField]) {
+                        var el = opts.finder.getEl(this, row[opts.valueField]);
+                        el.find('input.combobox-checkbox')._propAttr('checked', false);
+                    }
+                    //如果所有框都没有选中, 默认选中不限
+                    var selOpts = $(this).combobox("getValue");
+                    if (selOpts == undefined) {
+                        $(this).combobox("select", m_m_limit_value);
+                    }
+                }
+            });
+        }
+    })(jQuery)
+</script>
+#end
+
+##基于URL的多选框
+#macro(multiComboboxByURL $id $url $limitValue $defaultValue $dataOptions $loadSuccessCallBack)
+    #multiComboboxByURLBase($id $url $limitValue $defaultValue $dataOptions $loadSuccessCallBack false)
+#end
+
+##基于URL的单选框
+#macro(simpleComboboxByURLBase $id $url $limitValue $defaultValue $dataOptions $loadSuccessCallBack $lazy)
+<input id="$!id" name="$!id"/>
+<script type="text/javascript">
+    var $!{id}SimpleComboboxByURLLoad;
+    (function ($) {
+        $(function () {
+                $!{id}SimpleComboboxByURLLoad = load;
+            #if($lazy == false)
+                load();
+            #end
+        });
+        function load() {
+            var m_m_id = "$!id";
+            var m_m_default_value = "$!defaultValue";
+            var m_m_limit_value = "$!limitValue";
+            jQuery("#" + m_m_id).combobox({
+                editable: false,
+                valueField: 'id',
+                textField: 'text',
+                url: '$!url',
+                $!dataOptions
+                onLoadSuccess: function () {
+                    var items = $(this).combobox("getData");
+                    var id = m_m_default_value;
+                    if (items.length > 0) {
+                        var flag = false;
+                        for (var i = 0; i < items.length; i++) {
+                            if (id == items[i].id) {
+                                flag = true;
+                            }
+                        }
+                        if (!flag)
+                            id = items[0].id;
+                        $(this).combobox("select", id);
+                    }
+                    $!loadSuccessCallBack
+                },
+            });
+        }
+    })(jQuery)
+</script>
+#end
+
+##基于URL的单选框
+#macro(simpleComboboxByURL $id $url $limitValue $defaultValue $dataOptions $loadSuccessCallBack)
+    #simpleComboboxByURLBase($id $url $limitValue $defaultValue $dataOptions $loadSuccessCallBack false)
+#end
+
+
+##基于URL的联动(主)
+#macro(simpleComboboxLinkageByURL $id $url $defaultValue $dataOptions $callBack $loanSuccessCallBack $lazy)
+<input id="$!id" name="$!id"/>
+<script type="text/javascript">
+    var $!{id}SimpleComboboxLinkageByURLLoad;
+    (function ($) {
+        $(function () {
+                $!{id}SimpleComboboxLinkageByURLLoad = load;
+            #if($lazy == false)
+                load();
+            #end
+        });
+        function load() {
+            var m_m_id = "$!id";
+            var m_m_default_value = "$!defaultValue";
+            jQuery("#" + m_m_id).combobox({
+                editable: false,
+                valueField: 'id',
+                textField: 'text',
+                url: "$!url",
+                $!dataOptions
+                onLoadSuccess: function () {
+                    var items = $(this).combobox("getData");
+                    var id = m_m_default_value;
+                    if (items.length > 0) {
+                        var flag = false;
+                        for (var i = 0; i < items.length; i++) {
+                            if (id == items[i].id) {
+                                flag = true;
+                            }
+                        }
+                        if (!flag)
+                            id = items[0].id;
+                        $(this).combobox("select", id);
+                    }
+                    #if($callBack && $callBack != "")
+                            $!{callBack}(m_m_default_value);
+                    #else
+                        $!loanSuccessCallBack
+                    #end
+                },
+                onSelect: function (row) {
+                    #if($callBack && $callBack != "")
+                            $!{callBack}(row.id);
+                    #end
+                }
+            });
+        }
+    })(jQuery)
+</script>
+#end
+
+
+##基于URL的联动(副)
+#macro(lessSimpleComboboxLinkageByURL $id $url $appendFieldName $appendFieldJsValue $defaultValue $dataOptions $callBack $loanSuccessCallBack)
+<input id="$!id" name="$!id"/>
+<script type="text/javascript">
+    var $!{id}LessSimpleComboboxLinkageByURLLoad;
+    (function ($) {
+        var url = "";
+        #set($tmp_url = "")
+        #if ($url.indexOf("?") != -1)
+            #set($tmp_url = $url + $appendFieldName + "=")
+        #else
+            #set($tmp_url = $url + "?" + $appendFieldName + "=")
+        #end
+        $(function () {
+                $!{id}LessSimpleComboboxLinkageByURLLoad = load;
+        });
+        function load(sth) {
+            var m_m_id = "$!id";
+            var m_m_default_value = "$!defaultValue";
+            jQuery("#" + m_m_id).combobox({
+                editable: false,
+                valueField: 'id',
+                textField: 'text',
+                url: "$!{tmp_url}" + sth,
+                $!dataOptions
+                onLoadSuccess: function () {
+                    var items = $(this).combobox("getData");
+                    var id = m_m_default_value;
+                    if (items.length > 0) {
+                        var flag = false;
+                        for (var i = 0; i < items.length; i++) {
+                            if (id == items[i].id) {
+                                flag = true;
+                            }
+                        }
+                        if (!flag)
+                            id = items[0].id;
+                        $(this).combobox("select", id);
+                    }
+                    #if($callBack && $callBack != "")
+                        #if($appendFieldJsValue == "")
+                                $!{callBack}(m_m_default_value);
+                        #else
+                                $!{callBack}($!{appendFieldJsValue});
+                        #end
+                    #else
+                        $!loanSuccessCallBack
+                    #end
+                },
+                onSelect: function (row) {
+                    #if($callBack && $callBack != "")
+                        #if($appendFieldJsValue == "")
+                                $!{callBack}(row.id);
+                        #else
+                                $!{callBack}($!{appendFieldJsValue});
+                        #end
+
+                    #end
+                }
+            });
+        }
+    })(jQuery)
+</script>
+#end
+
+
+#macro(blank)
+&nbsp;
+#end
+
+##单选radios
+#macro(radios $name $entryName $defaultValue)
+    #radios2($name $entryName "" $defaultValue "")
+#end
+
+##单选radios
+#macro(radios2 $name $entryName $methodName $defaultValue $inputType)
+    #set($dicts = "")
+    #if($entryName.indexOf(".") != -1)
+        #set($dicts = $dictUtils.getDataByCompleteClassName($entryName, $methodName))
+    #else
+        #if($methodName == "")
+            #set($dicts = $dictUtils.getData($entryName))
+        #else
+            #set($dicts = $dictUtils.getDataByMethod($entryName, $methodName))
+        #end
+    #end
+    #if($inputType == "")
+        #set($inputType = "radio")
+    #end
+##判断列表长度
+    #if($dicts && $dicts.size() > 0)
+        #foreach($dict in $dicts)
+        <input type="$!inputType" name="$!{name}" id="$!{name}_${velocityCount}" value="$dict.intValue()"
+            #if($defaultValue && $defaultValue == $dict.intValue())
+               checked="checked"
+            #end
+        />
+        <label for="$!{name}_${velocityCount}">$!dict.name</label>
+        #end
+    <script type="text/javascript">
+        function $!{name}OfValue() {
+            var radio = $("input[name='$!{name}']:radio:checked");
+            if (radio.length <= 0)
+                return "";
+            return radio.val();
+        }
+        function $!{name}Init() {
+            var radio = $("input[name='$!{name}']:radio:checked");
+            if (radio.length > 0) {
+                radio.removeAttr("checked");
+            }
+        }
+    </script>
+    #end
+#end
+
+  ##单选radios
+  #macro(radios3 $name $dicts $defaultValue $inputType)
+      #if($dicts && $dicts.size() > 0)
+          #foreach($dict in $dicts)
+          <input type="radio" name="$!{name}" id="$!{name}_${velocityCount}" value="$dict.intValue()"
+              #if($defaultValue && $defaultValue == $dict.intValue())
+                 checked="checked"
+              #end
+          />
+          <label for="$!{name}_${velocityCount}">$!dict.desc</label>
+          #end
+      <script type="text/javascript">
+          function $!{name}OfValue() {
+              var radio = $("input[name='$!{name}']:radio:checked");
+              if (radio.length <= 0)
+                  return "";
+              return radio.val();
+          }
+          function $!{name}Init() {
+              var radio = $("input[name='$!{name}']:radio:checked");
+              if (radio.length > 0) {
+                  radio.removeAttr("checked");
+              }
+          }
+      </script>
+      #end
+  #end
+
+##获取字典名称
+#macro(getDictById $entryName $id)
+    #getDictById2($entryName $id "")
+#end
+
+##获取字典名称
+#macro(getDictById2 $entryName $id $methodName)
+    $!dictUtils.valueOf($entryName, $id, $methodName)
+#end
+
+#macro(getDictByIdInJS $entryName $id $methodName)
+"$!dictUtils.valueOf($entryName, $id, $methodName)"
+#end
+
+#macro(yishouMoney $map $type)
+    #set($money = "")
+    #set($money = $!convertUtil.fen2yuan2($!map.get($type), 2))
+    #if($money && $money != "")
+        $money
+    #else
+    0
+    #end
+#end
+
+#macro(yishouMoney2 $type)
+    #yishouMoney($!orderDetail.shiShouMap,$type)
+#end
+
+#macro (iwjwOptions $entryName $enumFieldName $limitValue $limitText)
+[
+##初始化第一个下拉框
+	#if($limitText && $limitText != "")
+	{value: $!limitValue,txt: '$!limitText'},
+	#end
+##根据类名获取字典里的枚举集合
+	#set($methodName = "")
+	#if($entryName.indexOf(".") != -1)
+		#set($dicts = $dictUtils.getDataByCompleteClassName($entryName, $methodName))
+	#else
+		#if($methodName == "")
+			#set($dicts = $dictUtils.getData($entryName))
+		#else
+			#set($dicts = $dictUtils.getDataByMethod($entryName, $methodName))
+		#end
+	#end
+##判断列表长度
+	#if($dicts && $dicts.size() && $dicts.size() > 0)
+	##初始化其它下拉框
+		#foreach($dict in $dicts)
+			#set($dict_id = $dict.intValue())
+		{value: $!{dict_id},txt: '$!dictUtils.valueOf($entryName, $dict_id, $enumFieldName)'},
+		#end
+	#end
+]
+#end
+
+#macro (iwjwSelectOptions $entryName $enumFieldName $selectValue $limitValue $limitText )
+##初始化第一个下拉框
+    #if($limitText && $limitText != "")
+	<option #if($selectValue == $limitValue) selected="selected" #end value="$!limitValue">$!limitText</option>
+    #end
+##根据类名获取字典里的枚举集合
+    #set($methodName = "")
+    #if($entryName.indexOf(".") != -1)
+        #set($dicts = $dictUtils.getDataByCompleteClassName($entryName, $methodName))
+    #else
+        #if($methodName == "")
+            #set($dicts = $dictUtils.getData($entryName))
+        #else
+            #set($dicts = $dictUtils.getDataByMethod($entryName, $methodName))
+        #end
+    #end
+##判断列表长度
+    #if($dicts && $dicts.size() && $dicts.size() > 0)
+    ##初始化其它下拉框
+        #foreach($dict in $dicts)
+            #set($dict_id = $dict.intValue())
+		<option value="$!{dict_id}" #if($selectValue == $dict_id) selected="selected" #end>$!dictUtils.valueOf($entryName, $dict_id, $enumFieldName)</option>
+        #end
+    #end
+#end

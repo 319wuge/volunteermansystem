@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<toolbox>
+	<tool>
+		<key>configResource</key>
+		<scope>application</scope>
+		<class>com.iw.wuge.agentReport.utils.ConfigResource</class>
+	</tool>
+	<tool>
+		<key>permisUtil</key>
+		<scope>application</scope>
+		<class>com.iw.wuge.agentReport.utils.web.PermissionUtil</class>
+	</tool>
+	<tool>
+		<key>static</key>
+		<scope>application</scope>
+		<class>com.manyi.staticresource.StaticResourceUtil</class>
+	</tool>
+	<tool>
+		<key>dictUtils</key>
+		<scope>application</scope>
+		<class>com.iw.wuge.agentReport.utils.web.DictUtils</class>
+	</tool>
+</toolbox>

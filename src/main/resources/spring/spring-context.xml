@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.hfuu"/>
+
+    <context:property-placeholder location="classpath:config.properties" ignore-unresolvable="true" />
+    <!-- 配置事务管理器 -->
+    <!--<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">-->
+        <!--<property name="dataSource" ref="writeDataSource"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; 注解方式配置事物 &ndash;&gt;-->
+    <!--<tx:annotation-driven/>-->
+    <!--&lt;!&ndash; Spring定时器注解开关&ndash;&gt;-->
+    <!--<task:annotation-driven />-->
+    <!--<bean class="com.manyi.iw.agent.report.exception.BusinessExceptionFactory">-->
+        <!--<property name="exceptionMsgFile" value="exception-msg.properties"/>-->
+    <!--</bean>-->
+
+</beans>

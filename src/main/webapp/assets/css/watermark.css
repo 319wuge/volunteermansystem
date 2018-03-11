@@ -1,0 +1,6 @@
+#repeat-watermark {
+    position:fixed;
+    z-index:-1;
+    top:0;
+    background: #fff;
+}

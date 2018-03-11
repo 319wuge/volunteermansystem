@@ -1,0 +1,557 @@
+#parse("/common/constants.vm")
+<!DOCTYPE html>
+<html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    #parse("/common/head.vm")
+    <style>
+        .field-row {
+            margin: 20px 0;
+        }
+        .field-row .order {
+            display: inline-block;
+            width: 15px;
+            text-align: right;
+        }
+        .field-row select {
+            min-width: 175px;
+            margin-left: 30px;
+        }
+
+        .field-row input {
+            margin-left: 30px;
+        }
+
+        .field-row .btn {
+            height: 20px;
+            line-height: 20px;
+            margin-left: 10px;
+        }
+        .field-row .btn.division-btn {
+            margin-left: 10px;
+        }
+        .field-row .btn.calculate-type {
+            margin-left: 10px;
+        }
+        .calc-row {
+            display: none;
+        }
+        .calc-row.active {
+            display: block;
+            margin: 10px 0 10px 15px;
+        }
+        .add-field-btn {
+            display: none;
+            margin: 10px 60px;
+            padding: 0 10px;
+            height: 20px;
+            line-height: 22px;
+        }
+        .save-change-btn {
+            display: none;
+            margin: 30px 0 0 220px;
+            padding: 0 15px;
+            height: 30px;
+            line-height: 32px;
+        }
+        .field-alias-name{
+            min-width: 175px;
+            margin-left: 30px;
+        }
+    </style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed page-sidebar-fixed page-footer-fixed">
+    #parse("/common/topbar.vm")
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    #parse("/common/menu.vm")
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+            <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+            <!-- BEGIN PAGE HEADER-->
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet">
+                        <div class="portlet-title">
+                            <div class="caption" id="contractCountDiv">${Title}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="padding-bottom: 10px">
+                    #parse("/common/selectOrg.vm")
+                </div>
+                <div class="col-md-12" style="padding-bottom: 150px">
+                    <p>若要修改字段请下拉选择后确认修改即可</p>
+                    <div id="fieldList">
+                    </div>
+
+                    <div class="row">
+                        <a class="btn btn-xs green add-field-btn" onclick="addField()">新增字段</a>
+                    </div>
+                    <div class="row">
+                        <a class="btn btn-xs default green save-change-btn" id="save-change-btn-ok" onclick="saveChange()">确认完成</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a class="btn btn-xs red save-change-btn" onclick="resetReportConfigData()">恢复默认</a>
+                    </div>
+                </div>
+
+                <div id="field_selection_tree"></div>
+                <div id="field_selection_tree_expression"></div>
+
+                <div class="col-md-12">
+                    <table id="report_dg" style="width:100%;">
+                    </table>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+    #parse("/common/footer.vm")
+<iframe id="downloadExcel" style="display: none"></iframe>
+<script type="application/javascript">
+    var firstLevelOptions = [];
+    var dataLevelOptions = [];
+    // 所有一级表头，用于字段
+    var dataLevels = ${dataLevels};
+    // 所有的一级表头，用于四则
+    dataLevelOptions = dataLevels.map(function(item, index) {
+        return '<option value="' + item.id + '">' + item.name + '</option>'
+    });
+    dataLevelOptions = ['<option value="">请选择</option>'].concat(dataLevelOptions);
+    dataLevelOptions = dataLevelOptions.concat(['<option value="0">自定义</option>']);
+
+    var dataExpressions = ${dataExpressions};
+    dataExpressionOptions = dataExpressions.map(function(item, index) {
+        return '<option value="' + item.id + '" expression="'+ item.expression + '">' + item.name + '</option>'
+    });
+    dataExpressionOptions = ['<option value="">请选择</option>'].concat(dataExpressionOptions);
+    dataExpressionOptions = dataExpressionOptions.concat(['<option value="0">自定义</option>']);
+
+    // 构造一行字段, 新增 field 的时候不传 data
+    function getNewFieldRow(data) {
+        if (!data) {
+            return $('<div class="field-row"></div>')
+                    .append('<span class="order"></span>')
+                    .append('<a data-calculateType="1" class="btn btn-xs default calculate-type field-calculate-type green" onclick="designFieldBtnClick(event)">指定字段</a>')
+                    .append('<a data-calculateType="2" class="btn btn-xs default calculate-type" onclick="expressionBtnClick(event)">四则运算</a>')
+                    .append($('<select data-rank="1" class="design-input"></select>').html(firstLevelOptions).val(''))
+                    .append($('<select data-rank="5" class="design-input select-level5"></select>'))
+                    .append($('<select data-expression-select="1" class="expression-input select-dataLevelId" style="display:none;"></select>').html(dataLevelOptions).val(''))
+                    .append($('<select data-expression-select="2" class="expression-input select-dataExpressionId" style="display:none;"></select>'))
+                    .append($('<input class="expression-input field-expression" placeholder="输入四则运算表达式" type="text" style="width:300px;display: none;">'))
+                    .append('<input type="text" placeholder="自定义名称" class="field-alias-name"/>')
+                    .append('<a class="btn btn-xs red delete-field-btn" onclick="deleteBtnClick(event)">删除</a>')
+
+        }
+
+        // 四则运算
+        if (data.calculateType == 2) {
+            if (data.dataExpressionId == 0) {
+                var firstTitleNode = $('#hidden_expression_' + data.dataLevelId + '[isFirstTitle="1"]');
+
+                return $('<div class="field-row"></div>')
+                        .append('<span class="order"></span>')
+                        .append('<a data-calculateType="1" class="btn btn-xs default calculate-type" onclick="designFieldBtnClick(event)">指定字段</a>')
+                        .append('<a data-calculateType="2" class="btn btn-xs default calculate-type field-calculate-type green" onclick="expressionBtnClick(event)">四则运算</a>')
+                        .append($('<select data-rank="1" class="design-input" style="display:none;"></select>').html(firstLevelOptions).val(''))
+                        .append($('<select data-rank="5" class="design-input select-level5" style="display:none;"></select>'))
+
+                        .append($('<select data-expression-select="1" class="expression-input select-dataLevelId"></select>').html(dataLevelOptions).val(data.dataLevelId))
+                        .append($('<select data-expression-select="2" class="expression-input select-dataExpressionId"></select>').html(getOptsByNode(firstTitleNode)).val(data.dataExpressionId))
+                        //                        .append($('<input class="expression-input field-expression" placeholder="输入四则运算表达式" type="text" value="'+ data.expression + '" style="width:300px;'+(data.dataExpressionId > 0 ? "display:none;":"")+'">'))
+                        .append($('<input class="expression-input field-expression" placeholder="输入四则运算表达式" type="text" value="'+ data.expression + '">'))
+                        .append('<input type="text" placeholder="自定义名称" class="field-alias-name" value="'+ data.fieldAliasName + '"/>')
+                        .append('<a class="btn btn-xs red delete-field-btn" onclick="deleteBtnClick(event)">删除</a>')
+            } else {
+                var dataNode = $('#hidden_expression_' + data.dataExpressionId + '[isFirstTitle="0"]');
+                if (dataNode.attr('isFirstTitle') == '0') {
+                    var firstTitleNode = dataNode.parent();
+
+                    return $('<div class="field-row"></div>')
+                            .append('<span class="order"></span>')
+                            .append('<a data-calculateType="1" class="btn btn-xs default calculate-type" onclick="designFieldBtnClick(event)">指定字段</a>')
+                            .append('<a data-calculateType="2" class="btn btn-xs default calculate-type field-calculate-type green" onclick="expressionBtnClick(event)">四则运算</a>')
+                            .append($('<select data-rank="1" class="design-input" style="display:none;"></select>').html(firstLevelOptions).val(''))
+
+                            .append($('<select class="design-input select-level5" style="display:none;"></select>'))
+
+                            .append($('<select data-expression-select="1" class="expression-input select-dataLevelId"></select>').html(dataLevelOptions).val(data.dataLevelId))
+                            .append($('<select data-expression-select="2" class="expression-input select-dataExpressionId"></select>').html(getOptsByNode(firstTitleNode), 2).val(data.dataExpressionId))
+                            //                            .append($('<input class="expression-input field-expression" placeholder="输入四则运算表达式" type="text" value="'+ data.expression + '" style="width:300px;'+(data.dataExpressionId > 0 ? "display:none;":"")+'">'))
+                            .append($('<input class="expression-input field-expression" placeholder="输入四则运算表达式" type="text" value="'+ data.expression + '">'))
+                            .append('<input type="text" placeholder="自定义名称" class="field-alias-name" value="'+ data.fieldAliasName + '"/>')
+                            .append('<a class="btn btn-xs red delete-field-btn" onclick="deleteBtnClick(event)">删除</a>')
+                }
+            }
+
+        }
+
+        // 指定字段计算方式
+        var dataNode = $('#hidden_field_' + data.firstDataId + '[isFirstTitle="0"]')
+        if (dataNode.attr('isFirstTitle') == '0') {
+            var firstTitleNode = dataNode.parent();
+            var firstTitleId = firstTitleNode.attr('data-id');
+
+            var result = $('<div class="field-row"></div>')
+                    .append('<span class="order"></span>')
+                    .append('<a data-calculateType="1" class="btn btn-xs default calculate-type field-calculate-type green" onclick="designFieldBtnClick(event)">指定字段</a>')
+                    .append('<a data-calculateType="2" class="btn btn-xs default calculate-type " onclick="expressionBtnClick(event)">四则运算</a>')
+                    .append($('<select data-rank="1" class="design-input"></select>').html(firstLevelOptions).val(firstTitleId))
+                    .append($('<select data-rank="2" class="design-input select-level5"></select>').html(getOptsByNode(firstTitleNode), 1).val(data.firstDataId))
+                    .append($('<select data-expression-select="1" class="expression-input select-dataLevelId" style="display:none;"></select>').html(dataLevelOptions).val(''))
+                    .append($('<select data-expression-select="2" class="expression-input select-dataExpressionId" style="display:none;"></select>').html(dataExpressionOptions).val(''))
+                    .append($('<input class="expression-input field-expression" placeholder="输入四则运算表达式" type="text" style="width:300px;display: none;">'))
+                    .append($('<input type="text" placeholder="自定义名称" class="field-alias-name" value="'+ data.fieldAliasName + '"/>'))
+                    .append('<a class="btn btn-xs red delete-field-btn" onclick="deleteBtnClick(event)">删除</a>');
+
+            return result;
+        }
+    }
+
+
+
+    // 在 id="field_selection_tree" 上构造一个 隐藏的dom, 用来方便查找树状结构的父级子级
+    function walkTree(data, node) {
+        if (data.reportDataVoList && data.reportDataVoList.length > 0) {
+            $.each(data.reportDataVoList, function(index, item) {
+                var newNode = $('<div id="hidden_field_' + item.id + '"isFirstTitle="' + item.isFirstTitle + '" data-id="' + item.id + '" data-name="' + item.name + '"></div>');
+                walkTree(item, newNode);
+                node.append(newNode);
+            });
+        }
+    }
+
+    // 在 id="field_selection_tree_expression" 上构造一个 隐藏的dom, 用来方便查找树状结构的父级子级
+    function walkTreeForExpression(data, node) {
+        if (data.reportDataVoList && data.reportDataVoList.length > 0) {
+            $.each(data.reportDataVoList, function(index, item) {
+                var newNode = $('<div id="hidden_expression_' + item.id + '" expression="' + item.expression + '" isFirstTitle="' + item.isFirstTitle + '" data-id="' + item.id + '" data-name="' + item.name + '"></div>');
+                walkTreeForExpression(item, newNode);
+                node.append(newNode);
+            });
+        }
+    }
+
+    // 根据隐藏的dom上的某个节点,获取它子级当作 下拉列表的选项
+    function getOptsByNode(node, caculateType) {
+        // node 是一个 jquery 的dom对象, 1 选择字段 ，其他 四则运算
+        if (caculateType == 1) {
+            return ['<option value="">请选择</option>'].concat(node.children().toArray().map(function(item) {
+                return '<option value="' + $(item).attr('data-id') + '">' + $(item).attr('data-name') + '</option>';
+            }));
+        }
+        return ['<option value="">请选择</option>'].concat(node.children().toArray().map(function(item) {
+            return '<option value="' + $(item).attr('data-id') + '" expression="' + $(item).attr('expression') + '">' + $(item).attr('data-name') + '</option>';
+        })).concat('<option value="0">自定义</option>');
+    }
+
+    // 重置显示顺序的数字, 以及绑定select的change事件
+    function setOrderNumber() {
+        $.each($('.field-row .order'), function(index, item) {
+            $(item).text((index + 1) + '.')
+        });
+        $('#fieldList select').unbind('change');
+        $('#fieldList select').bind('change', function(e) {
+            var src = $(e.target);
+            var expressionSelect = parseInt(src.attr('data-expression-select'));
+            if(expressionSelect == 1) {
+                src.next().val('');
+                src.next().next().val('');
+                src.next().next().next().val('');
+                src.next().html(getOptsByNode($('#hidden_expression_' + src.val() + '[isFirstTitle="' + expressionSelect + '"]'), 2)).val('');
+                return;
+            }
+            if(expressionSelect == 2) {
+                var dataExpressionId = parseInt($(this).val());
+                var fieldAliasName = '';
+                if(dataExpressionId > 0) {
+                    var expression = $(this).find("option:selected").attr("expression");
+                    $(e.target).parent().find('.field-expression').val(expression);
+                    //                    $(this).parent().find('.field-expression').css('display', 'none');
+                    $(this).parent().find('.field-alias-name').val($(this).find('option:selected').text());
+                } else {
+                    $(this).parent().find('.field-expression').css('display', 'inline-block');
+                    $(this).parent().find('.field-alias-name').val('');
+                }
+                return;
+            }
+            var level = parseInt(src.attr('data-rank'));
+            switch (level) {
+                case 1:
+                    src.next().val('');
+                    src.parent().find('.field-alias-name').val('');
+                    break;
+                case 2:
+                    src.next().val('');
+                    break;
+            }
+            if (level == 1) {
+                src.next().html(getOptsByNode($('#hidden_field_' + src.val() + '[isFirstTitle="' + level + '"]'),1)).val('');
+            } else {
+                var src = $(src);
+                fillFieldAliasName(src);
+            }
+        });
+    }
+
+    //填充化字段别名
+    function fillFieldAliasName(src) {
+        var clazz = src.parent().attr("class");
+        var item;
+        if (clazz != "" && typeof(clazz) != 'undefined' && clazz.indexOf("calc-row") == -1) {
+            item = src.parent();
+        } else {
+            item = src.parent().parent();
+        }
+        var commAttr = getCommAttr(item);
+        var f = '';
+        if (commAttr == 0) {
+            f = item.find("select.select-level5").find("option:selected").text();
+        } else if (commAttr == 1) {
+            var f1 = item.find("select.select-level5").find("option:selected").text();
+            var f2 = item.find("select.calc-child-select-level5").find("option:selected").text();
+            f = f1 + "/" + f2;
+        } else {
+            var f1 = item.find("select.select-level5").find("option:selected").text();
+            var f2 = item.find("select.calc-child-select-level5").find("option:selected").text();
+            f = f1 + "+" + f2;
+        }
+        item.find(".field-alias-name").val(f);
+    }
+
+    // 点击 指定字段
+    function designFieldBtnClick(e) {
+        $(e.target).addClass('field-calculate-type');
+        $(e.target).addClass('green');
+        $(e.target).next().removeClass('field-calculate-type');
+        $(e.target).next().removeClass('green');
+        $(e.target).parent().find(".expression-input").css('display', 'none');
+        $(e.target).parent().find(".design-input").css('display', 'inline-block');
+    }
+
+    // 点击 四则运算
+    function expressionBtnClick(e) {
+        $(e.target).addClass('field-calculate-type');
+        $(e.target).addClass('green');
+        $(e.target).prev().removeClass('field-calculate-type');
+        $(e.target).prev().removeClass('green');
+        $(e.target).parent().find(".expression-input").css('display', 'inline-block');
+        $(e.target).parent().find('.select-dataExpressionId').val();
+        $(e.target).parent().find('.field-expression').css('display', 'inline-block');
+        $(e.target).parent().find(".design-input").css('display', 'none');
+    }
+
+    // 点击 删除按钮
+    function deleteBtnClick(e) {
+        jQuery.messager.confirm('确认不在页面展示该字段?', '*如需再次展示该字段可新增或编辑其他字段。', function(r) {
+            if (r) {
+                $(e.target).parents('.field-row').remove();
+                setOrderNumber();
+            }
+        })
+    }
+
+    // 点击 计算相关按钮（除以、加上）
+    function calculateBtnClick(e) {
+        $(e.target).toggleClass('green');
+        $(e.target).parent().find("div.calc-row").toggleClass('active');
+    }
+
+    // 点击 添加字段按钮
+    function addField() {
+        $('#fieldList').append(getNewFieldRow());
+        setOrderNumber();
+    }
+
+    var canSaveChangFlag = true;
+    // 点击 确认完成按钮
+    function saveChange() {
+        if(canSaveChangFlag = false) {
+            return;
+        }
+        canSaveChangFlag = false;
+        $("#save-change-btn-ok").removeClass("green");
+        var result = [];
+        var unfinished = -1;    // 是否有未选完的字段的下标
+        var expressionUfinished = -1; // 是否有未填写四则运算表达式
+        var arrayForCheckDeulicate = []; // 用来检查是否有重复字段的
+        var duplicateIndex = -1;    // 如果有重复的,记录重复的下标
+        var errorTip = "";
+        $.each($('.field-row'), function(index, item) {
+            var data = {
+                firstDataId: $(item).find('.select-level5').val(),
+                commAttr: getCommAttr($(item)),
+                reportType: "$!{reportType}",
+                fieldAliasName : $(item).find('.field-alias-name').val(),
+                dataLevelId : $(item).find('.select-dataLevelId').val(),
+                calculateType : $(item).find('.field-calculate-type').attr("data-calculateType"),
+                dataExpressionId : $(item).find('.select-dataExpressionId').val(),
+                expression : $(item).find('.field-expression').val()
+            };
+            if (data.calculateType == 1 && !data.firstDataId) {
+                unfinished = index + 1;
+            }
+            if (data.calculateType == 2 && (!data.expression || data.expression == '')) {
+                expressionUfinished = index + 1;
+            }
+            var divisionItem = $(item).find('.calc-row');
+            if (divisionItem.hasClass('active')) {
+                data.secondDataId = divisionItem.find('.calc-child-select-level5').val();
+                if (!data.secondDataId) {
+                    unfinished = index + 1;
+                }
+            }
+            if (arrayForCheckDeulicate.indexOf(JSON.stringify(data)) > -1) {
+                duplicateIndex = index + 1;
+            }
+            arrayForCheckDeulicate.push(JSON.stringify(data));
+
+            data.orderBy = index + 1;
+            result.push(data);
+        });
+
+        if (unfinished > -1) {
+            jQuery.messager.alert('警告', '第' + unfinished + '行有未选完的字段', 'error');
+            canSaveChangFlag = true;
+            $("#save-change-btn-ok").addClass("green");
+            return false;
+        }
+        if (expressionUfinished > -1) {
+            jQuery.messager.alert('警告', '第' + expressionUfinished + '行四则运算表达式为空', 'error');
+            canSaveChangFlag = true;
+            $("#save-change-btn-ok").addClass("green");
+            return false;
+        }
+        if (duplicateIndex > -1) {
+            jQuery.messager.alert('警告', '第' + duplicateIndex + '行的字段跟其他行字段重复', 'error');
+            canSaveChangFlag = true;
+            $("#save-change-btn-ok").addClass("green");
+            return false;
+        }
+        $.ajax({
+            url: '$!{basePath}/datacenter/edit/saveAgentConfigReportData.json?reportType=$!{reportType}',
+            type: 'post',
+            data: {
+                dataRequest:JSON.stringify(result)
+            },
+            dataType: "json",
+            success: function(res) {
+                window.location.href = '$!{basePath}/datacenter/$!{reportType}/index.do';
+            }
+        });
+    }
+
+    //获取计算方式
+    function getCommAttr(item) {
+        var commAttr;
+        if (item.find("a.division-btn.green").length >= 1) {
+            commAttr = 1;
+        } else if (item.find("a.add-to-btn.green").length >= 1) {
+            commAttr = 2;
+        } else {
+            commAttr = 0;
+        }
+        return commAttr;
+    }
+
+    function init() {
+        $.ajax({
+            url: '$!{basePath}/datacenter/edit/getAllReportDataShowLevel.json?resultType=1&reportType=$!{reportType}',
+            success: function(data) {
+                walkTree({ reportDataVoList: data }, $('#field_selection_tree'));
+                if (data && data.length > 0) {
+                    firstLevelOptions = data.map(function(item, index) {
+                        return '<option value="' + item.id + '">' + item.name + '</option>'
+                    });
+                    firstLevelOptions = ['<option value="">请选择</option>'].concat(firstLevelOptions);
+                }
+
+                // 获取四则表达式
+                $.ajax({
+                    url: '$!{basePath}/datacenter/edit/getAllReportDataShowLevel.json?resultType=2',
+                    success: function(res) {
+                        walkTreeForExpression({reportDataVoList: res}, $('#field_selection_tree_expression'));
+
+                        $.ajax({
+                            url: '$!{basePath}/datacenter/edit/getReportDataLevelByAgentId.json?reportType=$!{reportType}',
+                            success: function(res) {
+                                if (res && res.length > 0) {
+                                    for (var i = 0; i < res.length; i++) {
+                                        $('#fieldList').append(getNewFieldRow(res[i]));
+                                    }
+                                }
+                                setOrderNumber();
+                                $('.add-field-btn, .save-change-btn').css('display', 'inline-block');
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+    }
+
+    function resetReportConfigData() {
+        jQuery.messager.confirm('确认','您是否要恢复到默认字段配置？如选择是，则您配置的所有字段信息将会清空，请谨慎选择！',function(r){
+            if (r){
+                jQuery.ajax({
+                    url : "$!{basePath}/datacenter/edit/resetAgentConfigReportData.json?reportType=$!{reportType}",
+                    type : "post",
+                    dataType : "json",
+                    success : function (res) {
+                        if (res.code == 1) {
+                            Iw.Util.successNoty("恢复成功！");
+                            $("#fieldList").html("");
+                            init();
+                        } else {
+                            Iw.Util.errorNoty("恢复失败，原因" + res.message + "！");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function getReportExpressoin(showLevelId, node) {
+        $.ajax({
+            url     : '$!{basePath}/datacenter/edit/getReportExpressoinByType.json',
+            data    : {
+                reportType : '$!{reportType}',
+                showLevelId : showLevelId
+            },
+            dataType: 'JSON',
+            success : function(data) {
+                var options = "<option value=''>请选择</option>";
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        options += "<option value=" + item.id + ">" + item.name + "</option>";
+                    });
+                }
+                node.html(options);
+            }
+        });
+    }
+</script>
+<script src="$!{basePath}/scripts/gridTitle.js"></script>
+</body>
+<!-- END BODY -->
+</html>

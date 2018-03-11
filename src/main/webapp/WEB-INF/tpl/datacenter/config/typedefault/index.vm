@@ -1,0 +1,137 @@
+#set($layout = "/layout/list_layout.vm")
+#parse("/common/constants.vm")
+
+<div class="col-md-12">
+    <div class="portlet">
+        <div class="portlet-title">
+            <div class="caption">默认展示配置</div>
+        </div>
+    </div>
+</div>
+
+<form action="#" class="form-horizontal col-md-offset-1" id="showReportForm">
+    <div class="form-body">
+        <div class="form-group">
+            <label class="col-md-3 control-label">报表类型</label>
+            <div class="col-md-2">
+                <select class="form-control" name="showReportType"
+                        id="showReportType" onchange="defaultConfigJs.getDefaultDataByType()">
+                    #foreach($dataCenterType in $dataCenterTypeEnum)
+                        #if($dataCenterType.intValue() != -1)
+                            #if($reportType == $dataCenterType.intValue())
+                                <option value="$dataCenterType.intValue()" selected>$dataCenterType.getName()</option>
+                            #else
+                                <option value="$dataCenterType.intValue()">$dataCenterType.getName()</option>
+                            #end
+                        #end
+                    #end
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="col-md-offset-2 col-md-5">
+    <label>表头编辑</label>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-default" onclick="defaultConfigJs.addFirstTitle()">+一级表头</button>
+    <input style="display: none" type="text" name="className" id="firstShowTitle"
+           class="form-control col-md-2" maxlength="64" placeholder="输入一级标题名称">
+    <button style="display: none" type="button" id="firstShowTitleSaveBtn" class="btn btn-default" onclick="defaultConfigJs.saveFirstTitle()">保存</button>
+</div>
+<div class="clearfix margin-bottom-15"></div>
+<div class="portlet-body col-md-offset-2 col-md-5">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+            </thead>
+            <tbody id="titleBody">
+                #foreach($titleList in $allTitleList)
+                    #set($separator = ".")
+                    #set($firstIndex = ${velocityCount})
+                    #foreach($title in $titleList)
+                        #set($secondIndex = ${velocityCount} - 1)
+                        #if($title.titleType == 3)
+                            <tr class="firstLevel active">
+                            <input type="hidden" name="firstLevel" value="$title.titleId">
+                            <input type="hidden" name="fistLevelSort" value="$firstIndex">
+                            <td>$firstIndex</td>
+                        #else
+                            <tr>
+                                <input type="hidden" name="fistLevelSort" value="$secondIndex">
+                                <input type="hidden" name="typeDefaultId" value="$title.typeDefaultId">
+                            <td>
+                                $firstIndex$separator$secondIndex
+                            </td>
+                        #end
+                        #if($title.titleType != 3)
+                            <td>
+                                <span style="cursor: pointer" onclick="defaultConfigJs.moveTitle(-1, $title.showLevelId, $title.typeDefaultId, this)">上移</span>
+                                &nbsp;&nbsp;&nbsp;
+                                <span style="cursor: pointer" onclick="defaultConfigJs.moveTitle(1, $title.showLevelId, $title.typeDefaultId, this)">下移</span>
+                            </td>
+                        #end
+                        #if($title.titleType ==3)
+                            <td colspan="5" style="text-align: center">$title.titleName</td>
+                        #else
+                            <td>$title.titleName</td>
+                        #end
+                        #if($!title.titleType != 3)
+                            <td style="width: 230px;word-wrap:break-word;word-break:break-all">$!title.expression</td>
+                        #end
+                        #if($!title.titleType != 3)
+                            #if($!title.titleType == 1)
+                                <td style="text-align: center;cursor: pointer">
+                                    <label onclick="defaultConfigJs.toEditReportDataPage($!title.titleId)">编辑</label>
+                                </td>
+                            #else
+                                <td style="text-align: center;cursor: pointer">
+                                    <label onclick="defaultConfigJs.toEditExpPage($!title.titleId)">编辑</label>
+                                </td>
+                            #end
+                        #end
+                        #if($title.titleType != 3)
+                            <td style="text-align: center;">
+                                <label style="cursor: pointer" onclick="defaultConfigJs.deleteSecondTitle(this, $title.typeDefaultId)">删除</label>
+                            </td>
+                        #end
+                        </tr>
+                    #end
+                #end
+
+                #if($!typeDefaultWithoutShowLevelList.size() > 0)
+                    <tr class="active">
+                        <input name="firstLevel" value="" type="hidden">
+                        <td colspan="6" style="text-align: center">无一级标题</td>
+                    </tr>
+                    #foreach($typeDefaultVo in $typeDefaultWithoutShowLevelList)
+                        <tr>
+                            <td>$!velocityCount</td>
+                            <td></td>
+                            <td>$!typeDefaultVo.titleName</td>
+                            <td>$!typeDefaultVo.expression</td>
+                            #if($!typeDefaultVo.titleType == 1)
+                                <td style="text-align: center;cursor: pointer">
+                                    <label onclick="defaultConfigJs.toEditReportDataPage($!typeDefaultVo.titleId)">编辑</label>
+                                </td>
+                            #else
+                                <td style="text-align: center;cursor: pointer">
+                                    <label onclick="defaultConfigJs.toEditExpPage($!typeDefaultVo.titleId)">编辑</label>
+                                </td>
+                            #end
+                            <td style="text-align: center;">
+                                <label style="cursor: pointer" onclick="defaultConfigJs.deleteSecondTitle(this, $typeDefaultVo.typeDefaultId)">删除</label>
+                            </td>
+                        </tr>
+                    #end
+                #end
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<input type="hidden" value="" id="editTitleId">
+<input type="hidden" value="" id="showLevelId">
+<input type="hidden" value="" id="typeDefaultId">
+<input type="hidden" value="" id="newSecondTitle">
+
+<script src="$!static.getURL("scripts/datacenter/config/defaultConfig.js")"></script>

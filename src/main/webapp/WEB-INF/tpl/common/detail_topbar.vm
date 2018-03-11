@@ -1,0 +1,42 @@
+<!-- BEGIN HEADER -->
+<div class="header navbar navbar-fixed-top">
+    <!-- BEGIN TOP NAVIGATION BAR -->
+    <div class="header-inner">
+        <!-- BEGIN LOGO -->
+        <a class="navbar-brand" href="${basePath}/index.do" style="width: 300px;padding-top: 0px;padding-bottom: 0px">
+            <img src="$!static.getURL("assets/img/iwjw-logo.png")" alt="logo"/>
+            <span style="font-size: 18px;font-family: Microsoft YaHei;color: #ffffff">$!projectCnName</span>
+        </a>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <img src="$!static.getURL("assets/img/menu-toggler.png")" alt=""/>
+        </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <ul class="nav navbar-nav pull-right">
+            <!-- BEGIN NOTIFICATION DROPDOWN -->
+            <!-- END NOTIFICATION DROPDOWN -->
+            <!-- BEGIN INBOX DROPDOWN -->
+            <!-- END INBOX DROPDOWN -->
+            <!-- BEGIN TODO DROPDOWN -->
+            <!-- END TODO DROPDOWN -->
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown">
+                <span class="admin_name">$!{saleAgentInfo.name}</span>
+            </li>
+            <li>
+                <div class="call-inner">
+                ##登录呼叫中心
+                </div>
+            </li>
+            <li style="margin: 2.5px 0px !important;">
+                <button type="button" class="btn btn-md btn-danger" style="" onclick="window.close();">关闭</button>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <!-- END TOP NAVIGATION MENU -->
+    </div>
+    <!-- END TOP NAVIGATION BAR -->
+</div>
+<!-- END HEADER -->

@@ -1,0 +1,228 @@
+##1.城市 2.大区 3.区域 4.门店 5.小组  6.经济人
+##request.setAttribute("select_level", select_level)
+#if($select_level && $select_level >= 1)
+城市
+<input class="easyui-combobox" name="select_cs" id="select_cs"/>
+#end
+#if($select_level && $select_level >= 2)
+大区
+<input class="easyui-combobox" name="select_dq" id="select_dq"/>
+#end
+#if($select_level && $select_level >= 3)
+区域
+<input class="easyui-combobox" name="select_qy" id="select_qy"/>
+#end
+#if($select_level && $select_level >= 4)
+门店
+<input class="easyui-combobox" name="select_md" id="select_md"/>
+#end
+#if($select_level && $select_level >= 5)
+小组
+<input class="easyui-combobox" name="select_xz" id="select_xz"/>
+#end
+#if($select_level && $select_level >= 6)
+经纪人
+<input class="easyui-combobox" name="select_jjr" id="select_jjr"/>
+#end
+
+<script type="text/javascript">
+	var level = "$!select_level";
+	$(function () {
+		csSelect();
+	});
+	function csSelect() {
+		if($("#select_cs").length <= 0) {
+			init();
+			return;
+		}
+		jQuery("#select_cs").combobox({
+										  url: '$!{basePath}/authselect/getCsOrgEntries.json?bizType=$!{bizType}&reportType=$!{reportType}',
+										  valueField: 'id',
+										  textField: 'text',
+										  method: 'get',
+										  panelHeight: 'auto',
+										  editable: false,
+										  onLoadSuccess: function () {
+											  selectFirst($("#select_cs"), 1, "$!{csId}");
+										  },
+										  onSelect: function (item) {
+											  var id = dqSelect(item.id);
+											  if(id == -1) {
+												  dqSelect(-1);
+											  }
+										  }
+									  });
+	}
+	function dqSelect(csid) {
+		if($("#select_dq").length <= 0) {
+			init();
+			return;
+		}
+		jQuery("#select_dq").combobox({
+										  url: '$!{basePath}/authselect/getDqOrgEntries.json?csId=' + csid + "&bizType=$!{bizType}&reportType=$!{reportType}&reportAreaLevel=$!{reportAreaLevel}",
+										  valueField: 'id',
+										  textField: 'text',
+										  method: 'get',
+										  panelHeight: 'auto',
+										  editable: false,
+										  onLoadSuccess: function () {
+											  var id = selectFirst($("#select_dq"), 2, "$!{dqId}");
+											  if(id == -1) {
+												  qySelect(csid, -1);
+											  }
+										  },
+										  onSelect: function (item) {
+											  qySelect(csid, item.id);
+										  }
+									  });
+	}
+	function qySelect(csid, dqid) {
+		if($("#select_qy").length <= 0) {
+			init();
+			return;
+		}
+		jQuery("#select_qy").combobox({
+										  url: '$!{basePath}/authselect/getQyOrgEntries.json?csId=' + csid + "&dqId=" + dqid + "&bizType=$!{bizType}&reportType=$!{reportType}&reportAreaLevel=$!{reportAreaLevel}",
+										  valueField: 'id',
+										  textField: 'text',
+										  method: 'get',
+										  panelHeight: 'auto',
+										  editable: false,
+										  onLoadSuccess: function () {
+											  var id = selectFirst($("#select_qy"), 3, "$!{qyId}");
+											  if(id == -1) {
+												  mdSelect(csid, dqid, -1);
+											  }
+										  },
+										  onSelect: function (item) {
+											  mdSelect(csid, dqid, item.id);
+										  }
+									  });
+	}
+	function mdSelect(csid, dqid, qyid) {
+		if($("#select_md").length <= 0) {
+			init();
+			return;
+		}
+		jQuery("#select_md").combobox({
+										  url: '$!{basePath}/authselect/getMdOrgEntries.json?csId=' + csid + "&dqId=" + dqid + "&qyId=" + qyid + "&bizType=$!{bizType}&reportType=$!{reportType}&reportAreaLevel=$!{reportAreaLevel}",
+										  valueField: 'id',
+										  textField: 'text',
+										  method: 'get',
+										  panelHeight: 'auto',
+										  editable: false,
+										  onLoadSuccess: function () {
+											  var id = selectFirst($("#select_md"), 4, "$!{mdId}");
+											  if(id == -1) {
+												  xzSelect(csid, dqid, qyid, -1);
+											  }
+										  },
+										  onSelect: function (item) {
+											  xzSelect(csid, dqid, qyid, item.id);
+										  }
+									  });
+	}
+	function xzSelect(csid, dqid, qyid, mdid) {
+		if($("#select_xz").length <= 0) {
+			init();
+			return;
+		}
+		jQuery("#select_xz").combobox({
+										  url: '$!{basePath}/authselect/getXzOrgEntries.json?csId=' + csid + "&dqId=" + dqid + "&qyId=" + qyid + "&mdId=" + mdid + "&bizType=$!{bizType}&reportType=$!{reportType}&reportAreaLevel=$!{reportAreaLevel}",
+										  valueField: 'id',
+										  textField: 'text',
+										  method: 'get',
+										  panelHeight: 'auto',
+										  editable: false,
+										  onLoadSuccess: function () {
+											  var id = selectFirst($("#select_xz"), 5, "$!{xzId}");
+											  if(id == -1) {
+												  jjrSelect(csid, dqid, qyid, mdid, -1);
+											  }
+										  },
+										  onSelect: function (item) {
+											  jjrSelect(csid, dqid, qyid, mdid, item.id);
+										  }
+									  });
+	}
+	function jjrSelect(csid, dqid, qyid, mdid, xzid) {
+		if($("#select_jjr").length <= 0) {
+			init();
+			return;
+		}
+		jQuery("#select_jjr").combobox({
+										   url: '$!{basePath}/authselect/getJjjOrgEntries.json?csId=' + csid + "&dqId=" + dqid + "&qyId=" + qyid + "&mdId=" + mdid + "&xzId=" + xzid + "&menuId=$!{curSelectedMenuId}&bizType=$!{selectBizType}&reportAreaLevel=$!{reportAreaLevel}",
+										   valueField: 'id',
+										   textField: 'text',
+										   method: 'get',
+										   panelHeight: 'auto',
+										   editable: false,
+										   onLoadSuccess: function () {
+											   var id = selectFirst($("#select_jjr"), 6, "$!{jjrId}");
+											   if(id == -1) {
+												   init();
+											   }
+										   },
+										   onSelect: function (item) {
+											   init();
+										   }
+									   });
+	}
+	function selectFirst(combobox, lv, val) {
+		var items = combobox.combobox("getData");
+		var id = -1;
+		if(items.length > 0) {
+			if(val.length == 0) {
+				id = items[0].id;
+			} else {
+				jQuery.each(items, function (i, e) {
+					if(items[i].id == val) {
+						id = val;
+					}
+				});
+				if(id == -1) {
+					id = items[0].id;
+				}
+			}
+			//id = val.length > 0 ? val : items[0].id;
+			combobox.combobox("select", id);
+		}
+		//        if (level.length > 0 && level == lv) {
+		//            init();
+		//        }
+		return id;
+	}
+	function getCsId() {
+		return getId($("#select_cs"));
+	}
+	function getDqId() {
+		return getId($("#select_dq"));
+	}
+	function getQyId() {
+		return getId($("#select_qy"));
+	}
+	function getMdId() {
+		return getId($("#select_md"));
+	}
+	function getXzId() {
+		return getId($("#select_xz"));
+	}
+	function getJjrId() {
+		return getId($("#select_jjr"));
+	}
+	function getIncumbencyId(){
+        if(document.getElementById('incumbency').checked) {
+            return 1;
+        } else {
+            return 0;
+        }
+	}
+	function getId(dom) {
+		var id = -1;
+		if(dom.length > 0 && '' != dom.combobox("getValue")) {
+			id = dom.combobox("getValue");
+		}
+		return id;
+	}
+
+</script>

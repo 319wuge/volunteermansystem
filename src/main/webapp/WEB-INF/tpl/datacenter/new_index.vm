@@ -1,0 +1,109 @@
+#set($layout = "/layout/list_layout.vm")
+#parse("/common/constants.vm")
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fixed Columns</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="$!static.getURL("assets/grid/bootstrap-table/bootstrap-table.css")">
+    <!-- <link rel="stylesheet" href="//rawgit.com/wenzhixin/bootstrap-table-fixed-columns/master/bootstrap-table-fixed-columns.css"> -->
+    <link rel="stylesheet" href="$!static.getURL("assets/grid/bootstrap-table-fixed-columns/bootstrap-table-fixed-columns.css")">
+    <link rel="stylesheet" href="$!static.getURL("assets/grid/qtip/jquery.qtip.min.css")">
+    <link rel="stylesheet" href="$!static.getURL("assets/grid/new_table_common.css")">
+    <style>
+        .bootstrap-table .table {
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-12">
+    <div class="portlet">
+        <div class="portlet-title">
+            <div class="caption" id="contractCountDiv">${Title} &nbsp;&nbsp;&nbsp;&nbsp;
+                #if($!permisUtil.checkAgentFunctionAuth($rc, $!reportAgentInfo.agentId, "F_agentreport_detail_editorfield"))
+                    <a class="btn btn-xs green" href="$!{basePath}/datacenter/edit/index.do?reportType=$!{dataCenterType}">编辑字段</a>
+                #end
+                &nbsp;&nbsp;<span style="color:red">*点击列标题可查看字段备注</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-12" style="padding-bottom: 10px">
+    #parse("/common/selectOrg.vm")
+    ##显示周表（并且不为经纪人）
+    #if($reportType == 3 && ($select_level && $select_level < 6))
+        &nbsp;<input type="checkbox" id="onlyOnJob" checked="checked">&nbsp;<label for="onlyOnJob">在职人数大于0</label>&nbsp;&nbsp;
+        <a class="btn btn-xs green" onclick="reQueryData()">查询 <i class="fa fa-search"></i></a>
+        <a class="btn btn-xs green" onclick="exportData()">导出Excel <i class="fa fa-share-square-o"></i></a>
+    #end
+</div>
+<div class="col-md-12" style="padding-bottom: 10px">
+    ##周表没有时间筛选
+    #if($reportType != 3)
+        开始&nbsp;<input id="startDate" type="text" class="easyui-datebox" data-options="editable:false"
+                       value="$!startDate">
+        结束&nbsp;<input id="endDate" type="text" class="easyui-datebox" data-options="editable:false" value="$!endDate">
+    #end
+    ##不是周表，(或者为经纪人表)在此处显示
+    #if($reportType != 3 || ($select_level && $select_level >= 6) )
+        ##判断是否是经纪人表
+        #if(!$select_level || ($select_level && $select_level < 6))
+            &nbsp;<input type="checkbox" id="onlyOnJob" checked="checked">&nbsp;<label for="onlyOnJob">在职人数大于0</label>&nbsp;&nbsp;
+        #else
+            手机&nbsp;<input id="mobile" name="mobile" class="easyui-textbox"/>
+            经纪人ID&nbsp;<input id="agentId" name="agentId" class="easyui-textbox"/>
+        #end
+        <a class="btn btn-xs green" onclick="reQueryData()">查询 <i class="fa fa-search"></i></a>
+        <a class="btn btn-xs green" onclick="exportData()">导出Excel <i class="fa fa-share-square-o"></i></a>
+    #end
+</div>
+<div class="col-md-12" style="padding-bottom: 10px">
+    <div class="container">
+    ##    <div class="toolbar form-inline">
+    ##        <span>Fixed Number: </span>
+    ##        <input class="form-control" id="fixedNumber" type="number" value="1" min="1" max="5">
+    ##    </div>
+        <table id="table" data-height="400" data-show-columns="true"></table>
+
+    </div>
+</div>
+<iframe id="downloadExcel" style="display: none"></iframe>
+<script type="text/javascript">
+    window.watermark = {
+        mobile: "$!agentEncrypterMobile"
+    }
+    var _title = $!{titles};
+    var _reportType = '$!{dataCenterType}';
+    var _isDef = "$!{isDef}";
+
+    function toNextLevel(type, startDate, endDate, cityId, bigAreaId, areaId, mendianId, groupId,agentId) {
+        var params = "?csId=" + cityId;
+        if (typeof(bigAreaId) != "undefined") {
+            params += "&dqId=" + bigAreaId;
+        }
+        if (typeof(areaId) != "undefined") {
+            params += "&qyId=" + areaId;
+        }
+        if (typeof(mendianId) != "undefined") {
+            params += "&mdId=" + mendianId;
+        }
+        if (typeof(groupId) != "undefined") {
+            params += "&xzId=" + groupId;
+        }
+        if (typeof(agentId) != "undefined") {
+            params += "&jjrId=" + agentId;
+        }
+        params += "&startDate=" + startDate + "&endDate=" + endDate;
+        var src = "$!{basePath}/datacenter/" + (type + 1) + "/index.do" + params;
+        window.open(src);
+    }
+</script>
+<script src="$!static.getURL("assets/grid/bootstrap-table/bootstrap-table.js")"></script>
+<script src="$!static.getURL("assets/grid/bootstrap-table-fixed-columns/bootstrap-table-fixed-columns.js")"></script>
+<script src="$!static.getURL("assets/grid/bootstrap-table/bootstrap-table-zh-CN.js")"></script>
+<script src="$!static.getURL("assets/grid/qtip/jquery.qtip.min.js")"></script>
+<script src="$!static.getURL("assets/grid/new_table_common.js")"></script>
+<script src="$!static.getURL("scripts/datacenter/new_index.js")"></script>
+</body>
+</html>

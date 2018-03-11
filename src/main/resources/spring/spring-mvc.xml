@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--<import resource="classpath:x/flyspace/java/skyprofile/spring/config.xml"/>-->
+    <!--<aop:config>-->
+        <!--<aop:aspect ref="skyProfileAdvice">-->
+            <!--<aop:around method="profile"-->
+                        <!--pointcut="execution(* com.manyi.iw.agent.report.dao..*(..)) or execution(* com.manyi.iw.agent.report.service..*(..))"/>-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
+
+
+    <bean class="org.springframework.web.servlet.view.velocity.VelocityConfigurer" id="velocityConfig">
+        <property name="configLocation" value="classpath:velocity.properties"/>
+    </bean>
+
+
+    <bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver" id="viewResolver">
+        <property name="prefix" value=""></property>
+        <property name="suffix" value=".vm"/>
+        <property name="cache" value="true"/>
+        <property name="exposeSpringMacroHelpers">
+            <value>true</value>
+        </property>
+        <property name="requestContextAttribute">
+            <value>rc</value>
+        </property>
+        <property name="exposeSessionAttributes" value="true"/>
+        <property name="exposeRequestAttributes" value="true"/>
+        <property name="allowSessionOverride" value="true"/>
+        <property name="contentType" value="text/html;charset=UTF-8"/>
+        <property name="toolboxConfigLocation">
+            <value>WEB-INF/classes/toolbox.xml</value>
+        </property>
+        <!--<property name="layoutUrl" value="/layout/empty.vm"/>-->
+        <!--<property name="viewClass" value="org.springframework.web.servlet.view.velocity.VelocityLayoutView"/>-->
+    </bean>
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="ignoreAcceptHeader" value="true" />
+        <property name="defaultContentType" value="text/html" />
+        <property name="mediaTypes">
+            <map>
+                <entry key="atom" value="application/atom+xml"/>
+                <entry key="json" value="application/json" />
+                <entry key="report" value="application/pdf" />
+            </map>
+        </property>
+        <property name="favorParameter" value="false" />
+        <property name="viewResolvers">
+            <list>
+                <ref bean="viewResolver" />
+            </list>
+        </property>
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+            </list>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler />
+
+    <!--<mvc:interceptors>-->
+    <!--<mvc:interceptor>-->
+    <!--<mvc:mapping path="/**"/>-->
+    <!--<mvc:exclude-mapping path="/" />-->
+    <!--<mvc:exclude-mapping path="/robots.txt" />-->
+    <!--<mvc:exclude-mapping path="/error.do" />-->
+    <!--<mvc:exclude-mapping path="/login" />-->
+    <!--<mvc:exclude-mapping path="/logout" />-->
+    <!--<mvc:exclude-mapping path="/assets/**" />-->
+    <!--<mvc:exclude-mapping path="/easyui/**" />-->
+    <!--<mvc:exclude-mapping path="/scripts/**" />-->
+    <!--<mvc:exclude-mapping path="/isLive.action"/>-->
+    <!--<bean class="com.manyi.iw.agent.report.interceptor.AgentLoginFilter"></bean>-->
+    <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+
+    <!-- 定义无Controller的path<->view直接映射 -->
+    <!--<mvc:view-controller path="/" view-name="redirect:/admin/index"/>-->
+</beans>

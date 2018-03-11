@@ -1,0 +1,82 @@
+#parse("/common/constants.vm")
+<!DOCTYPE html>
+<html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    #parse("/common/head.vm")
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed page-sidebar-fixed page-footer-fixed">
+    #parse("/common/topbar.vm")
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    #parse("/common/menu.vm")
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+            <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+            <!-- BEGIN PAGE HEADER-->
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet">
+                        <div class="portlet-title">
+                            <div class="caption" id="contractCountDiv">${Title} &nbsp;&nbsp;&nbsp;&nbsp;
+                                #if($!permisUtil.checkAgentFunctionAuth($rc, $!reportAgentInfo.agentId, "F_agentreport_detail_editorfield"))
+                                    <a class="btn btn-xs green" href="$!{basePath}/datacenter/edit/index.do?reportType=$!{dataCenterType}">编辑字段</a>
+                                #end
+                                &nbsp;&nbsp;<span style="color:red">*点击列标题可查看字段备注</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="padding-bottom: 10px">
+                    #parse("/common/selectOrg.vm")
+                </div>
+                <div class="col-md-12" style="padding-bottom: 10px">
+                    开始&nbsp;<input id="startDate" type="text" class="easyui-datebox" data-options="editable:false" value="$!startDate">
+                    结束&nbsp;<input id="endDate" type="text" class="easyui-datebox" data-options="editable:false" value="$!endDate">
+                    #if($select_level && $select_level >= 6)
+                        手机&nbsp;<input id="mobile" name="mobile" class="easyui-textbox"/>
+                        经纪人ID&nbsp;<input id="agentId" name="agentId" class="easyui-textbox"/>
+                    #end
+
+                    <a class="btn btn-xs green" onclick="reQueryData()">查询 <i class="fa fa-search"></i></a>
+                    <a class="btn btn-xs green" onclick="exportData()">导出Excel <i class="fa fa-share-square-o"></i></a>
+                </div>
+
+                <div class="col-md-12">
+                    <table id="report_dg" style="width:100%;">
+                    </table>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+    #parse("/common/footer.vm")
+<iframe id="downloadExcel" style="display: none"></iframe>
+<script type="text/javascript">
+    var _title = $!{titles};
+    var _reportType = '$!{dataCenterType}';
+    var _isDef = "$!{isDef}";
+</script>
+<script type="text/javascript" src="$!static.getURL("scripts/datacenter/index.js")"></script>
+</body>
+<!-- END BODY -->
+</html>

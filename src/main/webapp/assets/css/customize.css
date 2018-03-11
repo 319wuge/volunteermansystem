@@ -1,0 +1,70 @@
+/*
+* @Author: yqy
+* @Date:   2015-10-08 17:45:19
+* @Email:  yuqingyang.sh@superjia.com
+* @Last Modified by:   yuqy
+* @Last Modified time: 2015-10-19 16:22:57
+*/
+
+/*
+.datagrid{
+    background: transparent;
+}
+.datagrid-view {
+    background: transparent;
+}
+.datagrid-view2{
+    background: transparent;
+}
+.datagrid-btable {
+    background-color: transparent;
+}
+*/
+.datagrid-row-alt {
+    background: rgba(210, 210, 210, 0.1);
+}
+.datagrid-header{
+    background: transparent;
+}
+/*
+.datagrid-header-inner{
+    background: transparent;
+}
+
+.datagrid-td-rownumber {
+    background-color: transparent;
+}*/
+
+.datagrid-htable {
+    background-color: rgba(210, 210, 210, 0.1);
+}
+
+.panel-body{
+    background-color:transparent;
+}
+.panel,.page-content,.page-content .row {
+    background-color: transparent;
+}
+.combobox-item, .combobox-group{
+    background: #fff;
+}
+.combobox-item-selected {
+    color:#000;
+    background-color: #0081c2;
+}
+.datagrid-row-selected{
+    color: #fff;
+    background-color: #0081c2;
+}
+
+
+.portlet.box {
+    background-color: transparent !important
+}
+.portlet.box > .portlet-body{
+    background-color: transparent;
+}
+.tabbable-custom > .tab-content {
+    background-color: transparent;
+}
+

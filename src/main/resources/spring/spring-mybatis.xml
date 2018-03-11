@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:jdbc.properties,classpath:config.properties" ignore-unresolvable="true" />
+
+    <!-- 读DataSource -->
+    <bean id="readDataSource" class="com.manyi.dcm.lbdatasource.LBDataSource" destroy-method="close">
+        <property name="name" value="${r.jdbc.name}" />
+        <property name="logSql" value="${r.jdbc.logSql}" />
+        <property name="sqlProfile" value="${r.jdbc.sqlProfile}" />
+        <property name="connectionFailover" value="${r.jdbc.connectionFailover}" />
+        <property name="dataSources">
+            <bean class="com.manyi.dcm.lbdatasource.pool.DataSourcePool">
+                <property name="name" value="${r.jdbc.name}-Pool"/>
+                <property name="type" value="${r.jdbc.type}"/>
+                <property name="connectionTestTimeout" value="${r.jdbc.connectionTestTimeout}" />
+                <property name="dataSourceConfigs">
+                    <set>
+                        <bean class="com.manyi.dcm.lbdatasource.pool.DataSourceConfig">
+                            <property name="name" value="${r.jdbc.ds1.name}" />
+                            <property name="weight" value="${r.jdbc.ds1.weight}" />
+                            <property name="dataSourceClassName" value="${r.jdbc.dataSourceClassName}" />
+                            <property name="username" value="${r.jdbc.username}" />
+                            <property name="password" value="${r.jdbc.password}" />
+                            <property name="dataSourceProperties">
+                                <props>
+                                    <prop key="url">${r.jdbc.ds1.url}</prop>
+                                    <prop key="useUnicode">${r.jdbc.useUnicode}</prop>
+                                    <prop key="characterEncoding">${r.jdbc.characterEncoding}</prop>
+                                    <prop key="cachePrepStmts">${r.jdbc.cachePrepStmts}</prop>
+                                    <prop key="prepStmtCacheSize">${r.jdbc.prepStmtCacheSize}</prop>
+                                    <prop key="prepStmtCacheSqlLimit">${r.jdbc.prepStmtCacheSqlLimit}</prop>
+                                    <prop key="useServerPrepStmts">${r.jdbc.useServerPrepStmts}</prop>
+                                </props>
+                            </property>
+                            <property name="readOnly" value="${r.jdbc.readOnly}" />
+                            <property name="maxPoolSize" value="${r.jdbc.maxPoolSize}" />
+                            <property name="minIdle" value="${r.jdbc.minIdle}" />
+                            <property name="connectionTimeout" value="${r.jdbc.connectionTimeout}" />
+                        </bean>
+
+                        <bean class="com.manyi.dcm.lbdatasource.pool.DataSourceConfig">
+                            <property name="name" value="${r.jdbc.ds2.name}" />
+                            <property name="weight" value="${r.jdbc.ds2.weight}" />
+                            <property name="dataSourceClassName" value="${r.jdbc.dataSourceClassName}" />
+                            <property name="username" value="${r.jdbc.username}" />
+                            <property name="password" value="${r.jdbc.password}" />
+                            <property name="dataSourceProperties">
+                                <props>
+                                    <prop key="url">${r.jdbc.ds2.url}</prop>
+                                    <prop key="useUnicode">${r.jdbc.useUnicode}</prop>
+                                    <prop key="characterEncoding">${r.jdbc.characterEncoding}</prop>
+                                    <prop key="cachePrepStmts">${r.jdbc.cachePrepStmts}</prop>
+                                    <prop key="prepStmtCacheSize">${r.jdbc.prepStmtCacheSize}</prop>
+                                    <prop key="prepStmtCacheSqlLimit">${r.jdbc.prepStmtCacheSqlLimit}</prop>
+                                    <prop key="useServerPrepStmts">${r.jdbc.useServerPrepStmts}</prop>
+                                </props>
+                            </property>
+                            <property name="readOnly" value="${r.jdbc.readOnly}" />
+                            <property name="maxPoolSize" value="${r.jdbc.maxPoolSize}" />
+                            <property name="minIdle" value="${r.jdbc.minIdle}" />
+                            <property name="connectionTimeout" value="${r.jdbc.connectionTimeout}" />
+                        </bean>
+                    </set>
+                </property>
+                <property name="loadBalancerType" value="${r.jdbc.loadBalancerType}"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--<bean id="readSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="readDataSource"/>-->
+        <!--<property name="configLocation" value="classpath:mybatis/sqlmap-config.xml"/>-->
+        <!--<property name="mapperLocations" value="classpath:mybatis/mappers/report/read/**/*.xml"/>-->
+    <!--</bean>-->
+
+</beans>
