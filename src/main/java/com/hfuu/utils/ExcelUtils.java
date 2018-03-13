@@ -1,11 +1,11 @@
 package com.hfuu.utils;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
@@ -113,7 +113,7 @@ public class ExcelUtils {
 	public static <T> void export(String xlsName, HttpServletResponse response,String[] arr,List<T> list,Class<T> clzz) throws IllegalArgumentException, IllegalAccessException{
 		//String arr[] = {"日期","1套","2-10套","11-50套","51-100套","101套"};
 		HSSFWorkbook hssf = writeExcelFirst(arr,true);
-		if(CollectionUtils.isNotEmpty(list)) {
+		if(!CollectionUtils.isEmpty(list)) {
 			if(list.size() > 65534) {
 				list = list.subList(0,65534);
 				logger.warn("export over size list size is " + list.size());

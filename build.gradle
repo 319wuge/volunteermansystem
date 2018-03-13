@@ -1,0 +1,33 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		maven {url "http://60.205.229.100:8081/nexus/content/groups/public"}
+		mavenCentral()
+	}
+}
+
+apply plugin: 'maven'
+
+group = 'x.flyspace'
+version = '1.0-snapshot'
+archivesBaseName = (project.rootProject.name + project.path).split(":").join("-")
+repositories {
+	mavenLocal()
+	maven {url "http://60.205.229.100:8081/nexus/content/groups/public"}
+	mavenCentral()
+}
+
+buildscript {
+	dependencies {
+		classpath 'mysql:mysql-connector-java:5.1.38'
+		classpath 'x.flyspace:mybatis-generator-gradle-plugin-core:+'
+		classpath 'x.flyspace:mybatis-generator-plugin-core:+'
+		classpath files("./")
+	}
+}
+
+apply plugin: 'x.flyspace.gradle.plugin.mybaitsgenerator'
+
+mybatisGeneratorConfig {
+	config = file("mybatis-generator-config.xml")
+}

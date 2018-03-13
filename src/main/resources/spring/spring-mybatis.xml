@@ -7,75 +7,48 @@
 
     <context:property-placeholder location="classpath:jdbc.properties,classpath:config.properties" ignore-unresolvable="true" />
 
-    <!-- 读DataSource -->
-    <bean id="readDataSource" class="com.manyi.dcm.lbdatasource.LBDataSource" destroy-method="close">
-        <property name="name" value="${r.jdbc.name}" />
-        <property name="logSql" value="${r.jdbc.logSql}" />
-        <property name="sqlProfile" value="${r.jdbc.sqlProfile}" />
-        <property name="connectionFailover" value="${r.jdbc.connectionFailover}" />
-        <property name="dataSources">
-            <bean class="com.manyi.dcm.lbdatasource.pool.DataSourcePool">
-                <property name="name" value="${r.jdbc.name}-Pool"/>
-                <property name="type" value="${r.jdbc.type}"/>
-                <property name="connectionTestTimeout" value="${r.jdbc.connectionTestTimeout}" />
-                <property name="dataSourceConfigs">
-                    <set>
-                        <bean class="com.manyi.dcm.lbdatasource.pool.DataSourceConfig">
-                            <property name="name" value="${r.jdbc.ds1.name}" />
-                            <property name="weight" value="${r.jdbc.ds1.weight}" />
-                            <property name="dataSourceClassName" value="${r.jdbc.dataSourceClassName}" />
-                            <property name="username" value="${r.jdbc.username}" />
-                            <property name="password" value="${r.jdbc.password}" />
-                            <property name="dataSourceProperties">
-                                <props>
-                                    <prop key="url">${r.jdbc.ds1.url}</prop>
-                                    <prop key="useUnicode">${r.jdbc.useUnicode}</prop>
-                                    <prop key="characterEncoding">${r.jdbc.characterEncoding}</prop>
-                                    <prop key="cachePrepStmts">${r.jdbc.cachePrepStmts}</prop>
-                                    <prop key="prepStmtCacheSize">${r.jdbc.prepStmtCacheSize}</prop>
-                                    <prop key="prepStmtCacheSqlLimit">${r.jdbc.prepStmtCacheSqlLimit}</prop>
-                                    <prop key="useServerPrepStmts">${r.jdbc.useServerPrepStmts}</prop>
-                                </props>
-                            </property>
-                            <property name="readOnly" value="${r.jdbc.readOnly}" />
-                            <property name="maxPoolSize" value="${r.jdbc.maxPoolSize}" />
-                            <property name="minIdle" value="${r.jdbc.minIdle}" />
-                            <property name="connectionTimeout" value="${r.jdbc.connectionTimeout}" />
-                        </bean>
-
-                        <bean class="com.manyi.dcm.lbdatasource.pool.DataSourceConfig">
-                            <property name="name" value="${r.jdbc.ds2.name}" />
-                            <property name="weight" value="${r.jdbc.ds2.weight}" />
-                            <property name="dataSourceClassName" value="${r.jdbc.dataSourceClassName}" />
-                            <property name="username" value="${r.jdbc.username}" />
-                            <property name="password" value="${r.jdbc.password}" />
-                            <property name="dataSourceProperties">
-                                <props>
-                                    <prop key="url">${r.jdbc.ds2.url}</prop>
-                                    <prop key="useUnicode">${r.jdbc.useUnicode}</prop>
-                                    <prop key="characterEncoding">${r.jdbc.characterEncoding}</prop>
-                                    <prop key="cachePrepStmts">${r.jdbc.cachePrepStmts}</prop>
-                                    <prop key="prepStmtCacheSize">${r.jdbc.prepStmtCacheSize}</prop>
-                                    <prop key="prepStmtCacheSqlLimit">${r.jdbc.prepStmtCacheSqlLimit}</prop>
-                                    <prop key="useServerPrepStmts">${r.jdbc.useServerPrepStmts}</prop>
-                                </props>
-                            </property>
-                            <property name="readOnly" value="${r.jdbc.readOnly}" />
-                            <property name="maxPoolSize" value="${r.jdbc.maxPoolSize}" />
-                            <property name="minIdle" value="${r.jdbc.minIdle}" />
-                            <property name="connectionTimeout" value="${r.jdbc.connectionTimeout}" />
-                        </bean>
-                    </set>
-                </property>
-                <property name="loadBalancerType" value="${r.jdbc.loadBalancerType}"/>
-            </bean>
-        </property>
+    <!-- 阿里 druid 数据库连接池 -->
+    <bean id = "dataSource" class = "com.alibaba.druid.pool.DruidDataSource" destroy-method = "close" >
+        <!-- 数据库基本信息配置 -->
+        <property name = "url" value = "${url}" />
+        <property name = "username" value = "${username}" />
+        <property name = "password" value = "${password}" />
+        <property name = "driverClassName" value = "${driverClassName}" />
+        <property name = "filters" value = "${filters}" />
+        <!-- 最大并发连接数 -->
+        <property name = "maxActive" value = "${maxActive}" />
+        <!-- 初始化连接数量 -->
+        <property name = "initialSize" value = "${initialSize}" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name = "maxWait" value = "${maxWait}" />
+        <!-- 最小空闲连接数 -->
+        <property name = "minIdle" value = "${minIdle}" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name = "timeBetweenEvictionRunsMillis" value ="${timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name = "minEvictableIdleTimeMillis" value ="${minEvictableIdleTimeMillis}" />
+        <property name = "validationQuery" value = "${validationQuery}" />
+        <property name = "testWhileIdle" value = "${testWhileIdle}" />
+        <property name = "testOnBorrow" value = "${testOnBorrow}" />
+        <property name = "testOnReturn" value = "${testOnReturn}" />
+        <property name = "maxOpenPreparedStatements" value ="${maxOpenPreparedStatements}" />
+        <!-- 打开 removeAbandoned 功能 -->
+        <property name = "removeAbandoned" value = "${removeAbandoned}" />
+        <!-- 1800 秒，也就是 30 分钟 -->
+        <property name = "removeAbandonedTimeout" value ="${removeAbandonedTimeout}" />
+        <!-- 关闭 abanded 连接时输出错误日志 -->
+        <property name = "logAbandoned" value = "${logAbandoned}" />
+    </bean>
+    <!--不交由spring 管理事务 spring 管理事务会导致不能切换目标数据库-->
+    <bean id="managedTransactionFactory" class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory"/>
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="readSqlSessionFactory">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionFactory" ref="managedTransactionFactory"></property>
+        <property name="mapperLocations" value="classpath:mybatis/mappers/read/**/*.xml"/>
     </bean>
 
-    <!--<bean id="readSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
-        <!--<property name="dataSource" ref="readDataSource"/>-->
-        <!--<property name="configLocation" value="classpath:mybatis/sqlmap-config.xml"/>-->
-        <!--<property name="mapperLocations" value="classpath:mybatis/mappers/report/read/**/*.xml"/>-->
-    <!--</bean>-->
-
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="readMapperScannerConfigurer">
+        <property name="basePackage" value="com.hfuu.dao.read.custom"/>
+        <property name="sqlSessionFactoryBeanName" value="readSqlSessionFactory"/>
+    </bean>
 </beans>

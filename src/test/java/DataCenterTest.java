@@ -1,6 +1,6 @@
 
-import com.iw.wuge.agentReport.business.service.service.IDataCenterService;
-import com.iw.wuge.agentReport.business.service.service.impl.DataCenterServiceImpl;
+import com.hfuu.service.IDataCenterService;
+import com.hfuu.service.impl.DataCenterServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

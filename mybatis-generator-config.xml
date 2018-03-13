@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!--<properties resource="src/main/resources/config/dev/jdbc.properties"/>-->
+
+   <context defaultModelType="flat" id="generateWrite" targetRuntime="MyBatis3">
+        <property name="renamePlugin.search" value="Iw"/>
+        <property name="renamePlugin.replace" value=""/>
+        <property name="renamePlugin.prefix" value="MBG"/>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <plugin type="x.flyspace.mybatisgenerator.plugin.MySQLRowBoundsPlugin">
+            <property name="baseExample" value="com.hfuu.model.BaseExample"/>
+        </plugin>
+        <plugin type="x.flyspace.mybatisgenerator.plugin.RenamePlugin"/>
+        <plugin type="x.flyspace.mybatisgenerator.plugin.SeparateUserCodePlugin"/>
+        <commentGenerator type="x.flyspace.mybatisgenerator.comment.CommentGenerator">
+            <property name="suppressAllComments" value="false"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+        <jdbcConnection connectionURL="jdbc:mysql://60.205.229.100:3306/volunteer?useUnicode=true&amp;characterEncoding=utf-8&amp;tinyInt1isBit=false"
+                        driverClass="com.mysql.jdbc.Driver" password="123456"
+                        userId="root" />
+        <javaTypeResolver type="x.flyspace.mybatisgenerator.type.CustomJavaTypeResolver">
+            <property name="customTypeMap" value="TINYINT:java.lang.Integer,SMALLINT:java.lang.Integer"/>
+        </javaTypeResolver>
+        <javaModelGenerator targetPackage="com.hfuu.model.po"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+            <property name="renamePlugin.prefix" value=""/>
+        </javaModelGenerator>
+        <sqlMapGenerator targetPackage="mybatis.mappers.write.mbg"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+            <property name="renamePlugin.search" value="Mapper\z"/>
+            <property name="renamePlugin.replace" value="WriteMapper"/>
+            <property name="separateUserCodePlugin.targetPackage"
+                      value="mybatis.mappers.write.custom"/>
+            <property name="separateUserCodePlugin.search" value="Dao\z"/>
+            <property name="separateUserCodePlugin.replace" value="Mapper"/>
+        </sqlMapGenerator>
+        <javaClientGenerator targetPackage="com.hfuu.dao.write.mbg"
+                             targetProject="src/main/java"
+                             type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+            <property name="exampleMethodVisibility" value="public"/>
+            <property name="methodNameCalculator" value="default"/>
+            <property name="renamePlugin.search" value="Mapper\z"/>
+            <property name="renamePlugin.replace" value="WriteDao"/>
+            <property name="separateUserCodePlugin.targetPackage"
+                      value="com.hfuu.dao.write.custom"/>
+            <property name="separateUserCodePlugin.search" value="\AMBG"/>
+            <property name="separateUserCodePlugin.replace" value=""/>
+        </javaClientGenerator>
+       <table enableDeleteByExample="true"
+              enableDeleteByPrimaryKey="true"
+              enableInsert="true"
+              enableUpdateByExample="true"
+              enableUpdateByPrimaryKey="true"
+              enableSelectByExample="true"
+              enableCountByExample="true"
+              enableSelectByPrimaryKey="true"
+              tableName="tb_user">
+           <property name="useActualColumnNames" value="false"/>
+       </table>
+
+
+       <!--<table domainObjectName="SaleIndexMember"-->
+              <!--enableDeleteByExample="true"-->
+              <!--enableDeleteByPrimaryKey="true"-->
+              <!--enableInsert="true"-->
+              <!--enableUpdateByExample="true"-->
+              <!--enableUpdateByPrimaryKey="true"-->
+              <!--enableSelectByExample="true"-->
+              <!--enableCountByExample="true"-->
+              <!--enableSelectByPrimaryKey="true"-->
+              <!--tableName="report_data">-->
+           <!--<property name="useActualColumnNames" value="false"/>-->
+       <!--</table>-->
+
+
+       <!--
+            <table
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_sale_core_index_area">
+            <property name="useActualColumnNames" value="false"/>
+        </table>
+
+        <table domainObjectName="SaleIndexMendian"
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_sale_core_index_mendian">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+        
+        <table domainObjectName="SaleIndexGroup"
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_sale_core_index_group">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+
+       <table domainObjectName="IndexCity"
+              enableDeleteByExample="true"
+              enableDeleteByPrimaryKey="true"
+              enableInsert="true"
+              enableUpdateByExample="true"
+              enableUpdateByPrimaryKey="true"
+              enableSelectByExample="true"
+              enableCountByExample="true"
+              enableSelectByPrimaryKey="true"
+              tableName="iw_agent_core_index_city">
+           <property name="useActualColumnNames" value="true"/>
+           <ignoreColumn column="joinDate" />
+       </table>
+        <table domainObjectName="IndexArea"
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_area">
+            <property name="useActualColumnNames" value="true"/>
+            <ignoreColumn column="joinDate" />
+        </table>
+
+        <table domainObjectName="IndexMendian"
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_mendian">
+            <property name="useActualColumnNames" value="true"/>
+            <ignoreColumn column="joinDate" />
+        </table>
+        
+        <table domainObjectName="IndexGroup"
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_group">
+            <property name="useActualColumnNames" value="true"/>
+            <ignoreColumn column="joinDate" />
+        </table>
+        
+        <table domainObjectName="IndexMember"
+               enableDeleteByExample="true"
+               enableDeleteByPrimaryKey="true"
+               enableInsert="true"
+               enableUpdateByExample="true"
+               enableUpdateByPrimaryKey="true"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_member">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+-->
+    </context>
+
+    <context defaultModelType="flat" id="generateRead" targetRuntime="MyBatis3">
+        <property name="renamePlugin.search" value="Iw"/>
+        <property name="renamePlugin.replace" value=""/>
+        <property name="renamePlugin.prefix" value="MBG"/>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <plugin type="x.flyspace.mybatisgenerator.plugin.MySQLRowBoundsPlugin">
+            <property name="baseExample" value="com.hfuu.model.BaseExample"/>
+        </plugin>
+        <plugin type="x.flyspace.mybatisgenerator.plugin.RenamePlugin"/>
+        <plugin type="x.flyspace.mybatisgenerator.plugin.SeparateUserCodePlugin"/>
+        <commentGenerator type="x.flyspace.mybatisgenerator.comment.CommentGenerator">
+            <property name="suppressAllComments" value="false"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+        <jdbcConnection connectionURL="jdbc:mysql://60.205.229.100:3306/volunteer?useUnicode=true&amp;characterEncoding=utf-8&amp;tinyInt1isBit=false"
+                        driverClass="com.mysql.jdbc.Driver" password="123456"
+                        userId="root" />
+        <javaTypeResolver type="x.flyspace.mybatisgenerator.type.CustomJavaTypeResolver">
+            <property name="customTypeMap" value="TINYINT:java.lang.Integer,SMALLINT:java.lang.Integer"/>
+        </javaTypeResolver>
+        <javaModelGenerator targetPackage="com.hfuu.model.po"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+            <property name="renamePlugin.prefix" value=""/>
+        </javaModelGenerator>
+        <sqlMapGenerator targetPackage="mybatis.mappers.read.mbg"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+            <property name="renamePlugin.search" value="Mapper\z"/>
+            <property name="renamePlugin.replace" value="ReadMapper"/>
+            <property name="separateUserCodePlugin.targetPackage"
+                      value="mybatis.mappers.read.custom"/>
+            <property name="separateUserCodePlugin.search" value="Dao\z"/>
+            <property name="separateUserCodePlugin.replace" value="Mapper"/>
+        </sqlMapGenerator>
+        <javaClientGenerator targetPackage="com.hfuu.dao.read.mbg"
+                             targetProject="src/main/java"
+                             type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+            <property name="exampleMethodVisibility" value="public"/>
+            <property name="methodNameCalculator" value="default"/>
+            <property name="renamePlugin.search" value="Mapper\z"/>
+            <property name="renamePlugin.replace" value="ReadDao"/>
+            <property name="separateUserCodePlugin.targetPackage"
+                      value="com.hfuu.dao.read.custom"/>
+            <property name="separateUserCodePlugin.search" value="\AMBG"/>
+            <property name="separateUserCodePlugin.replace" value=""/>
+        </javaClientGenerator>
+
+    <table                enableDeleteByExample="false"
+                          enableDeleteByPrimaryKey="false"
+                          enableInsert="false"
+                          enableUpdateByExample="false"
+                          enableUpdateByPrimaryKey="false"
+                          enableSelectByExample="true"
+                          enableCountByExample="true"
+                          enableSelectByPrimaryKey="true"
+                          tableName="tb_user">
+        <property name="useActualColumnNames" value="false"/>
+    </table>
+        <!--<table                enableDeleteByExample="false"-->
+                              <!--enableDeleteByPrimaryKey="false"-->
+                              <!--enableInsert="false"-->
+                              <!--enableUpdateByExample="false"-->
+                              <!--enableUpdateByPrimaryKey="false"-->
+                              <!--enableSelectByExample="true"-->
+                              <!--enableCountByExample="true"-->
+                              <!--enableSelectByPrimaryKey="true"-->
+                              <!--tableName="report_data">-->
+            <!--<property name="useActualColumnNames" value="false"/>-->
+        <!--</table>-->
+
+
+    <!--<table domainObjectName="SaleIndexArea"-->
+           <!--enableDeleteByExample="false"-->
+           <!--enableDeleteByPrimaryKey="false"-->
+           <!--enableInsert="false"-->
+           <!--enableUpdateByExample="false"-->
+           <!--enableUpdateByPrimaryKey="false"-->
+           <!--enableSelectByExample="true"-->
+           <!--enableCountByExample="true"-->
+           <!--enableSelectByPrimaryKey="true"-->
+           <!--tableName="report_data">-->
+        <!--<property name="useActualColumnNames" value="false"/>-->
+    <!--</table>-->
+        <!-- <table domainObjectName="SaleIndexMendian"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_sale_core_index_mendian">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+        <table domainObjectName="SaleIndexGroup"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_sale_core_index_group">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+        <table domainObjectName="SaleIndexMember"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_sale_core_index_member">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+        <table domainObjectName="IndexArea"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_area">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+        <table domainObjectName="IndexMendian"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_mendian">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+        <table domainObjectName="IndexGroup"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_group">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+
+        <table domainObjectName="IndexMember"
+               enableDeleteByExample="false"
+               enableDeleteByPrimaryKey="false"
+               enableInsert="false"
+               enableUpdateByExample="false"
+               enableUpdateByPrimaryKey="false"
+               enableSelectByExample="true"
+               enableCountByExample="true"
+               enableSelectByPrimaryKey="true"
+               tableName="iw_agent_core_index_member">
+            <property name="useActualColumnNames" value="true"/>
+        </table> -->
+</context>
+</generatorConfiguration>

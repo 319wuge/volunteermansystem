@@ -1,7 +1,10 @@
-package com.iw.wuge.agentReport.controller;
+package com.hfuu.controller;
 
+import com.hfuu.service.IDataCenterService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 //import javax.servlet.http.HttpServletRequest;
 
@@ -14,12 +17,13 @@ public class HomeController  {
 //	private IAgentService agentService;
 //	@Autowired
 //	private BusinessExceptionFactory exceptionFactory;
+	@Autowired
+	private IDataCenterService service;
 
 	@RequestMapping(value = "/login.do")
+	@ResponseBody
 	public String index() {
-//		AgentInfo agentInfo = responseLoginAgentInfo(request);
-//		responseMenu(agentInfo, request);
-		return "/login";
+		return "";
 	}
 
 //	@RequestMapping(value = "/error.do")
