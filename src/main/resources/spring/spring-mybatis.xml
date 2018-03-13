@@ -48,7 +48,7 @@
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="readMapperScannerConfigurer">
-        <property name="basePackage" value="com.hfuu.dao.read.custom"/>
+        <property name="basePackage" value="com.hfuu.dao.read"/>
         <property name="sqlSessionFactoryBeanName" value="readSqlSessionFactory"/>
     </bean>
 </beans>
