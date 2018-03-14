@@ -29,8 +29,6 @@ public class DataCenterServiceImpl implements IDataCenterService {
         TbUserExample.Criteria criteria = example.createCriteria();
         criteria.andUsernameEqualTo("1");
         List<TbUser> rList = tbUserReadDao.selectByExample(example);
-        if (true)
-        throw new ServiceExceptionSpec(ExceptionEnum.SESSION_UN_LOGIN);
-        return null;
+        return rList;
     }
 }
