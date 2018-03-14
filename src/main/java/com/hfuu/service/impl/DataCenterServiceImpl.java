@@ -1,6 +1,8 @@
 package com.hfuu.service.impl;
 
 import com.hfuu.dao.read.custom.TbUserReadDao;
+import com.hfuu.enums.system.ExceptionEnum;
+import com.hfuu.exceptions.ServiceExceptionSpec;
 import com.hfuu.model.po.TbUser;
 import com.hfuu.model.po.TbUserExample;
 import com.hfuu.service.IDataCenterService;
@@ -21,12 +23,14 @@ public class DataCenterServiceImpl implements IDataCenterService {
     private TbUserReadDao tbUserReadDao;
 
     @Override
-    public List<TbUser> testLogger() {
+    public List<TbUser> testLogger() throws ServiceExceptionSpec {
 
         TbUserExample example = new TbUserExample();
         TbUserExample.Criteria criteria = example.createCriteria();
         criteria.andUsernameEqualTo("1");
         List<TbUser> rList = tbUserReadDao.selectByExample(example);
-        return rList;
+        if (true)
+        throw new ServiceExceptionSpec(ExceptionEnum.SESSION_UN_LOGIN);
+        return null;
     }
 }

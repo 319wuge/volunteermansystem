@@ -16,10 +16,10 @@ public class DataCenterTest {
     @Autowired
     private IDataCenterService service;
 
-    @Test
-    public void testDataCenter(){
-        service.testLogger();
-    }
+//    @Test
+//    public void testDataCenter(){
+//        service.testLogger();
+//    }
 
     @Test
     public void testClassDefFound(){

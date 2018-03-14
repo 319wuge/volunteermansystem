@@ -1,5 +1,6 @@
 package com.hfuu.service;
 
+import com.hfuu.exceptions.ServiceExceptionSpec;
 import com.hfuu.model.po.TbUser;
 
 import java.util.List;
@@ -9,5 +10,5 @@ import java.util.List;
  */
 public interface IDataCenterService {
 
-    List<TbUser> testLogger();
+    List<TbUser> testLogger() throws ServiceExceptionSpec;
 }
