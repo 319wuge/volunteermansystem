@@ -10,7 +10,7 @@
     <!-- 阿里 druid 数据库连接池 -->
     <bean id = "dataSource" class = "com.alibaba.druid.pool.DruidDataSource" destroy-method = "close" >
         <!-- 数据库基本信息配置 -->
-        <property name = "url" value = "${url}" />
+        <property name = "url" value = "${sqlurl}" />
         <property name = "username" value = "${username}" />
         <property name = "password" value = "${password}" />
         <property name = "driverClassName" value = "${driverClassName}" />
@@ -49,6 +49,18 @@
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="readMapperScannerConfigurer">
         <property name="basePackage" value="com.hfuu.dao.read"/>
+        <property name="sqlSessionFactoryBeanName" value="readSqlSessionFactory"/>
+    </bean>
+
+    <!--配置写数据库 -->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="writeSqlSessionFactory">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionFactory" ref="managedTransactionFactory"></property>
+        <property name="mapperLocations" value="classpath:mybatis/mappers/write/**/*.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="writeMapperScannerConfigurer">
+        <property name="basePackage" value="com.hfuu.dao.write"/>
         <property name="sqlSessionFactoryBeanName" value="readSqlSessionFactory"/>
     </bean>
 </beans>
